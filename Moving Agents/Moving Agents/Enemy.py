@@ -1,8 +1,11 @@
 from Vector import Vector
+from Agent import Agent
+from Constants import Constants
 import pygame
 import random
 
-class Enemy:
+class Enemy(Agent):
+    #constructor for the enemy
     def __init__(self,spawnPosition,enemySize,initialSpeed):
         self.position = spawnPosition
         self.velocity = (Vector)(0,0)
@@ -13,48 +16,35 @@ class Enemy:
     def __str__(self):
         return ('Enemy Position: ' + str(self.position) + ' Enemy Velocity: ' + str(self.velocity) + ' Enemy Size: ' + str(self.size) + ' Enemy Center: ' + str(self.center))
 
-    def calculateCenter(self):
-        centerPos = (Vector)(self.position.x, self.position.y)
-        centerPos.x += self.size/2
-        centerPos.y += self.size/2
-        return centerPos
 
     def draw(self,screen):
         #draw the enemy
-        pygame.draw.rect(screen,(0,255,0),pygame.Rect(self.position.x,self.position.y,self.size,self.size))
+        pygame.draw.rect(screen,Constants.Enemy_Color,pygame.Rect(self.position.x,self.position.y,self.size,self.size))
 
     def update(self,player):
         #calculate if the player is within alert range
-        dist = abs((self.position - player.position).length())
-        print(dist)
-        if(dist < 200):
+        dist = self.distBetweenAgents(player)
+        if(dist < Constants.Enemy_Detection_Dist):
             self.flee(player)
         else:
             self.wander()
 
-        #adding velocity to position to move the enemy
-        self.position += self.velocity
+        #calling parent update
+        super().update()
 
     def flee(self,player):
         #calculate direction to run in
         dirVec = self.position - player.position
-        dirVec = dirVec.normalize()
-        dirVec = dirVec.scale(self.speed)
-
-        #set velocity to calculated vector
-        self.velocity = dirVec
+        self.velocity = self.setSpeedVec(dirVec)
  
 
     def wander(self):
         #add a small random to both X and Y velocity
-        self.velocity.x += random.uniform(-0.3,0.3)
-        self.velocity.y += random.uniform(-0.3,0.3)
+        self.velocity.x += random.uniform(-Constants.Enemy_Random_Wander_Factor,Constants.Enemy_Random_Wander_Factor)
+        self.velocity.y += random.uniform(-Constants.Enemy_Random_Wander_Factor,Constants.Enemy_Random_Wander_Factor)
 
-        #renormalize the velocity
-        self.velocity = self.velocity.normalize()
-
-        #scale to speed
-        self.velocity = self.velocity.scale(self.speed)
+        #calling parent method to normalize and set velocity to proper speed
+        self.velocity = self.setSpeedVec(self.velocity)
         
 
 
