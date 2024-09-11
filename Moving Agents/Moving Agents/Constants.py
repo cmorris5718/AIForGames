@@ -6,6 +6,7 @@ class Constants:
     SCREEN_HEIGHT = 600
     Frame_Rate = 60
     Background_Color = (100,149,237)
+    Flee_Line_Color = (255,0,0)
 
     #Player Constants
     Player_Color = (255,255,0)

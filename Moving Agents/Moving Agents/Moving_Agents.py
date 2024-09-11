@@ -16,14 +16,15 @@ pygame.display.set_caption('Moving Agents')
 clock = pygame.time.Clock()
 
 spawnLoc = (Vector)(260,260)
+spawnLoc2 = (Vector)(600,300)
 
 #Creating the player object
 playerChar = (Player)(Constants.Player_Initial_Spawn,Constants.Player_Speed,Constants.Player_Size)
 enemyChar = (Enemy)(spawnLoc,Constants.Enemy_Speed,Constants.Enemy_Size)
-enemyChar2 = (Enemy)(spawnLoc,Constants.Enemy_Speed,Constants.Enemy_Size)
-enemyChar3 = (Enemy)(spawnLoc,Constants.Enemy_Speed,Constants.Enemy_Size)
+#enemyChar2 = (Enemy)(spawnLoc,Constants.Enemy_Speed,Constants.Enemy_Size)
+enemyChar3 = (Enemy)(spawnLoc2,Constants.Enemy_Speed,Constants.Enemy_Size)
 
-enemyList = [enemyChar,enemyChar2]
+enemyList = [enemyChar,enemyChar3]
 '''
 for i in range(Constants.Enemy_Spawn_Count):
     #Getting random spawn location
@@ -60,7 +61,7 @@ while not exit:
     '''
     playerChar.draw(display)
     enemyChar.draw(display)
-    enemyChar2.draw(display)
+    #enemyChar2.draw(display)
     enemyChar3.draw(display)
     '''
     for val in enemyList:

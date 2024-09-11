@@ -7,11 +7,7 @@ import random
 class Enemy(Agent):
     #constructor for the enemy
     def __init__(self,spawnPosition,enemySize,initialSpeed):
-        self.position = spawnPosition
-        self.velocity = (Vector)(0,0)
-        self.speed = initialSpeed
-        self.size = enemySize
-        self.center = self.calculateCenter()
+        super().__init__(spawnPosition,enemySize,initialSpeed)
 
     def __str__(self):
         return ('Enemy Position: ' + str(self.position) + ' Enemy Velocity: ' + str(self.velocity) + ' Enemy Size: ' + str(self.size) + ' Enemy Center: ' + str(self.center))
@@ -19,7 +15,8 @@ class Enemy(Agent):
 
     def draw(self,screen):
         #draw the enemy
-        pygame.draw.rect(screen,Constants.Enemy_Color,pygame.Rect(self.position.x,self.position.y,self.size,self.size))
+        super().draw(screen,Constants.Enemy_Color)
+        
 
     def update(self,player):
         #calculate if the player is within alert range
@@ -36,12 +33,19 @@ class Enemy(Agent):
         #calculate direction to run in
         dirVec = self.position - player.position
         self.velocity = self.setSpeedVec(dirVec)
+        self.drawTargetLine = True
  
 
     def wander(self):
+        #probably the better method here but idk it's like 2am 
+        '''
         #add a small random to both X and Y velocity
         self.velocity.x += random.uniform(-Constants.Enemy_Random_Wander_Factor,Constants.Enemy_Random_Wander_Factor)
         self.velocity.y += random.uniform(-Constants.Enemy_Random_Wander_Factor,Constants.Enemy_Random_Wander_Factor)
+        '''
+        #lmao square snorted some coke with this method
+        self.velocity.x = random.uniform(-Constants.Enemy_Random_Wander_Factor,Constants.Enemy_Random_Wander_Factor)
+        self.velocity.y = random.uniform(-Constants.Enemy_Random_Wander_Factor,Constants.Enemy_Random_Wander_Factor)
 
         #calling parent method to normalize and set velocity to proper speed
         self.velocity = self.setSpeedVec(self.velocity)

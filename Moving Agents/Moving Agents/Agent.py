@@ -14,7 +14,7 @@ class Agent:
         
     #draws a rectangle representing the agent 
     def draw(self, screen, color):
-        pygame.draw.rect(screen, color, pygame.Rect(self.position.x,self.position.y, self.size,self.size))
+        pygame.draw.rect(screen, color, self.rect)
 
     #updates the position of the agent
     def update(self):
@@ -23,6 +23,12 @@ class Agent:
 
         #checking the bounds
         self.checkBounds()
+
+        #recalculate centers
+        self.center = self.calculateCenter()
+
+        #Calculating the rect of this agent
+        self.rect = pygame.Rect(self.position.x, self.position.y, self.size, self.size)
 
     #normalizes and scales a vector to the proper speed per agent
     def setSpeedVec(self,vec):
