@@ -1,17 +1,17 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "E:\\PythonApplication1\\",
+  "WorkspaceRootPath": "E:\\GitRepos\\AIForGames\\PythonApplication1\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{C57CEDE6-0F80-474B-BF8C-BA52956BFA37}|PythonApplication1\\PythonApplication1.pyproj|E:\\PythonApplication1\\PythonApplication1\\Player.py||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "AbsoluteMoniker": "D:0:0:{C57CEDE6-0F80-474B-BF8C-BA52956BFA37}|PythonApplication1\\PythonApplication1.pyproj|E:\\GitRepos\\AIForGames\\PythonApplication1\\PythonApplication1\\Player.py||{8B382828-6202-11D1-8870-0000F87579D2}",
       "RelativeMoniker": "D:0:0:{C57CEDE6-0F80-474B-BF8C-BA52956BFA37}|PythonApplication1\\PythonApplication1.pyproj|solutionrelative:PythonApplication1\\Player.py||{8B382828-6202-11D1-8870-0000F87579D2}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{C57CEDE6-0F80-474B-BF8C-BA52956BFA37}|PythonApplication1\\PythonApplication1.pyproj|E:\\PythonApplication1\\PythonApplication1\\PythonApplication1.py||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "AbsoluteMoniker": "D:0:0:{C57CEDE6-0F80-474B-BF8C-BA52956BFA37}|PythonApplication1\\PythonApplication1.pyproj|E:\\GitRepos\\AIForGames\\PythonApplication1\\PythonApplication1\\PythonApplication1.py||{8B382828-6202-11D1-8870-0000F87579D2}",
       "RelativeMoniker": "D:0:0:{C57CEDE6-0F80-474B-BF8C-BA52956BFA37}|PythonApplication1\\PythonApplication1.pyproj|solutionrelative:PythonApplication1\\PythonApplication1.py||{8B382828-6202-11D1-8870-0000F87579D2}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{C57CEDE6-0F80-474B-BF8C-BA52956BFA37}|PythonApplication1\\PythonApplication1.pyproj|E:\\PythonApplication1\\PythonApplication1\\Vector.py||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "AbsoluteMoniker": "D:0:0:{C57CEDE6-0F80-474B-BF8C-BA52956BFA37}|PythonApplication1\\PythonApplication1.pyproj|E:\\GitRepos\\AIForGames\\PythonApplication1\\PythonApplication1\\Vector.py||{8B382828-6202-11D1-8870-0000F87579D2}",
       "RelativeMoniker": "D:0:0:{C57CEDE6-0F80-474B-BF8C-BA52956BFA37}|PythonApplication1\\PythonApplication1.pyproj|solutionrelative:PythonApplication1\\Vector.py||{8B382828-6202-11D1-8870-0000F87579D2}"
     }
   ],
@@ -28,11 +28,11 @@
               "$type": "Document",
               "DocumentIndex": 2,
               "Title": "Vector.py",
-              "DocumentMoniker": "E:\\PythonApplication1\\PythonApplication1\\Vector.py",
+              "DocumentMoniker": "E:\\GitRepos\\AIForGames\\PythonApplication1\\PythonApplication1\\Vector.py",
               "RelativeDocumentMoniker": "PythonApplication1\\Vector.py",
-              "ToolTip": "E:\\PythonApplication1\\PythonApplication1\\Vector.py",
+              "ToolTip": "E:\\GitRepos\\AIForGames\\PythonApplication1\\PythonApplication1\\Vector.py",
               "RelativeToolTip": "PythonApplication1\\Vector.py",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAALAAAAAAAAAA==",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAAAAAAALAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002457|",
               "WhenOpened": "2024-09-03T04:21:29.059Z",
               "IsPinned": true,
@@ -42,11 +42,11 @@
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "Player.py",
-              "DocumentMoniker": "E:\\PythonApplication1\\PythonApplication1\\Player.py",
+              "DocumentMoniker": "E:\\GitRepos\\AIForGames\\PythonApplication1\\PythonApplication1\\Player.py",
               "RelativeDocumentMoniker": "PythonApplication1\\Player.py",
-              "ToolTip": "E:\\PythonApplication1\\PythonApplication1\\Player.py",
+              "ToolTip": "E:\\GitRepos\\AIForGames\\PythonApplication1\\PythonApplication1\\Player.py",
               "RelativeToolTip": "PythonApplication1\\Player.py",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACoAAAA2AAAAAAAAAA==",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAACoAAAA2AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002457|",
               "WhenOpened": "2024-09-03T04:52:59.482Z",
               "IsPinned": true,
@@ -56,11 +56,11 @@
               "$type": "Document",
               "DocumentIndex": 1,
               "Title": "PythonApplication1.py",
-              "DocumentMoniker": "E:\\PythonApplication1\\PythonApplication1\\PythonApplication1.py",
+              "DocumentMoniker": "E:\\GitRepos\\AIForGames\\PythonApplication1\\PythonApplication1\\PythonApplication1.py",
               "RelativeDocumentMoniker": "PythonApplication1\\PythonApplication1.py",
-              "ToolTip": "E:\\PythonApplication1\\PythonApplication1\\PythonApplication1.py",
+              "ToolTip": "E:\\GitRepos\\AIForGames\\PythonApplication1\\PythonApplication1\\PythonApplication1.py",
               "RelativeToolTip": "PythonApplication1\\PythonApplication1.py",
-              "ViewState": "AgIAAAIAAAAAAAAAAAAAABoAAAA5AAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002457|",
               "WhenOpened": "2024-09-01T16:35:36.626Z",
               "EditorCaption": ""
