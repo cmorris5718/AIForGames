@@ -35,8 +35,7 @@
               "ViewState": "AgIAAAMAAAAAAAAAAAAAAAAAAAALAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002457|",
               "WhenOpened": "2024-09-03T04:21:29.059Z",
-              "IsPinned": true,
-              "EditorCaption": ""
+              "IsPinned": true
             },
             {
               "$type": "Document",
@@ -46,7 +45,7 @@
               "RelativeDocumentMoniker": "PythonApplication1\\Player.py",
               "ToolTip": "E:\\GitRepos\\AIForGames\\PythonApplication1\\PythonApplication1\\Player.py",
               "RelativeToolTip": "PythonApplication1\\Player.py",
-              "ViewState": "AgIAAAMAAAAAAAAAAAAAACoAAAA2AAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAwCoAAAA2AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002457|",
               "WhenOpened": "2024-09-03T04:52:59.482Z",
               "IsPinned": true,
@@ -62,8 +61,7 @@
               "RelativeToolTip": "PythonApplication1\\PythonApplication1.py",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002457|",
-              "WhenOpened": "2024-09-01T16:35:36.626Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-09-01T16:35:36.626Z"
             }
           ]
         }

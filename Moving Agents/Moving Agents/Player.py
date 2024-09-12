@@ -12,6 +12,7 @@ class Player(Agent):
         #Attributes for determining who current target is
         self.currentTarget = None
         self.hasHitCurrentTarget = False
+        self.currentEnemyIndex = 0
 
     #string method for class
     def __str__(self):
@@ -28,11 +29,12 @@ class Player(Agent):
     def update(self,enemyList):
         #if player has no target find the closest enemy without any filters
         if(self.currentTarget == None):
-            self.currentTarget = self.findClosestEnemy(enemyList)
+            self.findNextEnemy(enemyList)
         #if the player has hit it's current target find the closest enemy that's not
         #the one that's just been hit
         elif(self.hasHitCurrentTarget):
-            self.currentTarget = self.findClosestEnemy(enemyList,self.currentTarget)
+            #self.currentTarget = self.findClosestEnemy(enemyList,self.currentTarget)
+            self.findNextEnemy(enemyList)
             self.hasHitCurrentTarget = False
 
         #Calculating the direction towards an enemy
@@ -50,8 +52,20 @@ class Player(Agent):
         if(self.checkAgentCollision(pygame.Rect(self.currentTarget.position.x, self.currentTarget.position.y, self.currentTarget.size, self.currentTarget.size ))):
             self.hasHitCurrentTarget = True
 
+
+    #iterate through list of enemies tagging them one by one
+    def findNextEnemy(self,enemyList):
+        #setting proper index
+        self.currentEnemyIndex += 1
+        if(self.currentEnemyIndex == len(enemyList)):
+            self.currentEnemyIndex = 0
+
+        #setting target as enemy
+        self.currentTarget = enemyList[self.currentEnemyIndex]
+
     #method to find the closest enemy from the given list
     #can exclude an enemy to avoid constantly hovering over a currently colliding enemy
+    #Was using this but player and multiple enemies could get stuck in a corner so switched
     def findClosestEnemy(self,enemyList,excludedEnemy = None):
         #setting variables and minDist to irrationally large value
         closestEnemy = None

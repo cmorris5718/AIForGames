@@ -36,16 +36,17 @@ class Enemy(Agent):
         self.drawTargetLine = True
  
 
-    def wander(self):
-        #probably the better method here but idk it's like 2am 
-        '''
+    def wander(self): 
+        
         #add a small random to both X and Y velocity
         self.velocity.x += random.uniform(-Constants.Enemy_Random_Wander_Factor,Constants.Enemy_Random_Wander_Factor)
         self.velocity.y += random.uniform(-Constants.Enemy_Random_Wander_Factor,Constants.Enemy_Random_Wander_Factor)
-        '''
+        
         #lmao square snorted some coke with this method
-        self.velocity.x = random.uniform(-Constants.Enemy_Random_Wander_Factor,Constants.Enemy_Random_Wander_Factor)
-        self.velocity.y = random.uniform(-Constants.Enemy_Random_Wander_Factor,Constants.Enemy_Random_Wander_Factor)
+        #NOTE UNCOMMENT THESE LINES OF CODE TO SEE THE SQUARES DO A FUNNY :)
+        #I WROTE THESE LINES OF CODE AT LIKE 4AM BECAUSE I THOUGHT IT MIGHT BE FUNNY
+        #self.velocity.x = random.uniform(-Constants.Enemy_Random_Wander_Factor,Constants.Enemy_Random_Wander_Factor)
+        #self.velocity.y = random.uniform(-Constants.Enemy_Random_Wander_Factor,Constants.Enemy_Random_Wander_Factor)
 
         #calling parent method to normalize and set velocity to proper speed
         self.velocity = self.setSpeedVec(self.velocity)
