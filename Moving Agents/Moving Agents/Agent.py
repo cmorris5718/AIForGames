@@ -38,22 +38,12 @@ class Agent:
 
     #normalizes and scales a vector to the proper speed per agent
     def setSpeedVec(self,vec):
-        print(self.speed)
-        print(vec)
-        print(vec.length())
+        
         #normalize the vector
-        vec = vec.normalize()
-        print(' After Normalization')
-        print(vec)
-        print(vec.length())
+        vec = vec.normalize()       
 
         #scale by the speed
-        vec = vec.scale(self.speed)
-        print(' After Scaling')
-        print(vec)
-        print(vec.length())
-
-        print()
+        vec = vec.scale(self.speed)        
 
         return vec
 
@@ -80,14 +70,12 @@ class Agent:
         #Checks if the right side of the square is off the right side of the screen and adjusts accordingly
         elif(self.position.x > Constants.SCREEN_WIDTH - self.size):
             self.position.x = Constants.SCREEN_WIDTH - self.size
-            self.velocity.x = 0
         #checks if the top of the square is off the top of the screen and adjusts accordingly
         if(self.position.y < 0):
             self.position.y = 0
         #checks if the bottom of the square is off the bottom of the screen and adjusts accordingly
         elif(self.position.y > Constants.SCREEN_HEIGHT - self.size):
             self.position.y = Constants.SCREEN_HEIGHT - self.size
-            self.velocity.y = 0
 
     #returns the distance between two agents
     def distBetweenAgents(self, other):

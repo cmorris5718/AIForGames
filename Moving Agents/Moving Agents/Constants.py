@@ -21,7 +21,7 @@ class Constants:
     Enemy_Speed = 5
     Enemy_Color = (0,255,0)
     Enemy_Detection_Dist = 200
-    Enemy_Random_Wander_Factor = 0.5
+    Enemy_Random_Wander_Factor = 0.75
     Enemy_Spawn_Count = 10
 
 

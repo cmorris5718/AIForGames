@@ -29,7 +29,6 @@ class Vector:
     #return a vector that has been scaled by scaleValue
     def scale(self, scaleValue):
         scaledVec = (Vector)(self.x * scaleValue, self.y * scaleValue)
-        print("Scaled Vec " + str(scaledVec))
         return scaledVec
 
     #returns the length of a vector
