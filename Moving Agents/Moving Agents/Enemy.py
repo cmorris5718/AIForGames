@@ -56,7 +56,7 @@ class Enemy(Agent):
 
         #add a small random to both X and Y velocity
         self.velocity.x += random.uniform(-Constants.Enemy_Random_Wander_Factor,Constants.Enemy_Random_Wander_Factor)
-        self.velocity.y += random.uniform(-Constants.Enemy_Random_Wander_Factor,Constants.Enemy_Random_Wander_Factor)
+        self.velocity.y += random.uniform(-Constants.Enemy_Random_Wander_Factor,Constants.Enemy_Random_Wander_Factor
 
         #calling parent method to normalize and set velocity to proper speed
         self.velocity = self.setSpeedVec(self.velocity)

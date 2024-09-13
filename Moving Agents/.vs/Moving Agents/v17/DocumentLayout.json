@@ -3,6 +3,14 @@
   "WorkspaceRootPath": "C:\\GitRepos\\AIForGames\\Moving Agents\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{16C049C3-3543-446D-A0A5-53010C590E5C}|Moving Agents\\Moving Agents.pyproj|C:\\GitRepos\\AIForGames\\Moving Agents\\Moving Agents\\Enemy.py||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{16C049C3-3543-446D-A0A5-53010C590E5C}|Moving Agents\\Moving Agents.pyproj|solutionrelative:Moving Agents\\Enemy.py||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{16C049C3-3543-446D-A0A5-53010C590E5C}|Moving Agents\\Moving Agents.pyproj|C:\\GitRepos\\AIForGames\\Moving Agents\\Moving Agents\\Agent.py||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{16C049C3-3543-446D-A0A5-53010C590E5C}|Moving Agents\\Moving Agents.pyproj|solutionrelative:Moving Agents\\Agent.py||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{16C049C3-3543-446D-A0A5-53010C590E5C}|Moving Agents\\Moving Agents.pyproj|C:\\GitRepos\\AIForGames\\Moving Agents\\Moving Agents\\Vector.py||{8B382828-6202-11D1-8870-0000F87579D2}",
       "RelativeMoniker": "D:0:0:{16C049C3-3543-446D-A0A5-53010C590E5C}|Moving Agents\\Moving Agents.pyproj|solutionrelative:Moving Agents\\Vector.py||{8B382828-6202-11D1-8870-0000F87579D2}"
     },
@@ -15,16 +23,8 @@
       "RelativeMoniker": "D:0:0:{16C049C3-3543-446D-A0A5-53010C590E5C}|Moving Agents\\Moving Agents.pyproj|solutionrelative:Moving Agents\\Moving_Agents.py||{8B382828-6202-11D1-8870-0000F87579D2}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{16C049C3-3543-446D-A0A5-53010C590E5C}|Moving Agents\\Moving Agents.pyproj|C:\\GitRepos\\AIForGames\\Moving Agents\\Moving Agents\\Agent.py||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{16C049C3-3543-446D-A0A5-53010C590E5C}|Moving Agents\\Moving Agents.pyproj|solutionrelative:Moving Agents\\Agent.py||{8B382828-6202-11D1-8870-0000F87579D2}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{16C049C3-3543-446D-A0A5-53010C590E5C}|Moving Agents\\Moving Agents.pyproj|C:\\GitRepos\\AIForGames\\Moving Agents\\Moving Agents\\Player.py||{8B382828-6202-11D1-8870-0000F87579D2}",
       "RelativeMoniker": "D:0:0:{16C049C3-3543-446D-A0A5-53010C590E5C}|Moving Agents\\Moving Agents.pyproj|solutionrelative:Moving Agents\\Player.py||{8B382828-6202-11D1-8870-0000F87579D2}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{16C049C3-3543-446D-A0A5-53010C590E5C}|Moving Agents\\Moving Agents.pyproj|C:\\GitRepos\\AIForGames\\Moving Agents\\Moving Agents\\Enemy.py||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{16C049C3-3543-446D-A0A5-53010C590E5C}|Moving Agents\\Moving Agents.pyproj|solutionrelative:Moving Agents\\Enemy.py||{8B382828-6202-11D1-8870-0000F87579D2}"
     }
   ],
   "DocumentGroupContainers": [
@@ -34,24 +34,24 @@
       "DocumentGroups": [
         {
           "DockedWidth": 351,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 0,
               "Title": "Enemy.py",
               "DocumentMoniker": "C:\\GitRepos\\AIForGames\\Moving Agents\\Moving Agents\\Enemy.py",
               "RelativeDocumentMoniker": "Moving Agents\\Enemy.py",
               "ToolTip": "C:\\GitRepos\\AIForGames\\Moving Agents\\Moving Agents\\Enemy.py",
               "RelativeToolTip": "Moving Agents\\Enemy.py",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAwAAAAbAAAA",
+              "ViewState": "AQIAAC0AAAAAAAAAAAAAADoAAAB0AAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
               "WhenOpened": "2024-09-11T02:37:08.615Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "Player.py",
               "DocumentMoniker": "C:\\GitRepos\\AIForGames\\Moving Agents\\Moving Agents\\Player.py",
               "RelativeDocumentMoniker": "Moving Agents\\Player.py",
@@ -59,12 +59,11 @@
               "RelativeToolTip": "Moving Agents\\Player.py",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAsAAAAXAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2024-09-11T07:25:35.216Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-09-11T07:25:35.216Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 1,
               "Title": "Agent.py",
               "DocumentMoniker": "C:\\GitRepos\\AIForGames\\Moving Agents\\Moving Agents\\Agent.py",
               "RelativeDocumentMoniker": "Moving Agents\\Agent.py",
@@ -77,7 +76,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 4,
               "Title": "Moving_Agents.py",
               "DocumentMoniker": "C:\\GitRepos\\AIForGames\\Moving Agents\\Moving Agents\\Moving_Agents.py",
               "RelativeDocumentMoniker": "Moving Agents\\Moving_Agents.py",
@@ -85,12 +84,11 @@
               "RelativeToolTip": "Moving Agents\\Moving_Agents.py",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAA4AAAAwAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2024-09-11T03:14:30.522Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-09-11T03:14:30.522Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 2,
               "Title": "Vector.py",
               "DocumentMoniker": "C:\\GitRepos\\AIForGames\\Moving Agents\\Moving Agents\\Vector.py",
               "RelativeDocumentMoniker": "Moving Agents\\Vector.py",
@@ -103,7 +101,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "Constants.py",
               "DocumentMoniker": "C:\\GitRepos\\AIForGames\\Moving Agents\\Moving Agents\\Constants.py",
               "RelativeDocumentMoniker": "Moving Agents\\Constants.py",
@@ -111,8 +109,7 @@
               "RelativeToolTip": "Moving Agents\\Constants.py",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAgAAABMAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2024-09-11T05:48:06.878Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-09-11T05:48:06.878Z"
             }
           ]
         }
