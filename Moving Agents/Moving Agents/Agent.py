@@ -14,7 +14,12 @@ class Agent:
         
     #draws a rectangle representing the agent 
     def draw(self, screen, color):
+        #drawing the agent
         pygame.draw.rect(screen, color, self.rect)
+
+        #drawing the agent's velocity line
+        endPos = (Vector)(self.center.x + self.velocity.x, self.center.y + self.velocity.y)
+        pygame.draw.line(screen,Constants.Velocity_Line_Color,(self.center.x, self.center.y),(endPos.x, endPos.y),Constants.Line_Thickness)
 
     #updates the position of the agent
     def update(self):
@@ -30,13 +35,25 @@ class Agent:
         #Calculating the rect of this agent
         self.rect = pygame.Rect(self.position.x, self.position.y, self.size, self.size)
 
+
     #normalizes and scales a vector to the proper speed per agent
     def setSpeedVec(self,vec):
+        print(self.speed)
+        print(vec)
+        print(vec.length())
         #normalize the vector
         vec = vec.normalize()
+        print(' After Normalization')
+        print(vec)
+        print(vec.length())
 
         #scale by the speed
         vec = vec.scale(self.speed)
+        print(' After Scaling')
+        print(vec)
+        print(vec.length())
+
+        print()
 
         return vec
 

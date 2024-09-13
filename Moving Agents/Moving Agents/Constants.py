@@ -7,6 +7,8 @@ class Constants:
     Frame_Rate = 60
     Background_Color = (100,149,237)
     Flee_Line_Color = (255,0,0)
+    Line_Thickness = 3
+    Velocity_Line_Color = (255,0,255)
 
     #Player Constants
     Player_Color = (255,255,0)

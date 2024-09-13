@@ -23,7 +23,7 @@ class Player(Agent):
         #draw the player
         super().draw(screen,Constants.Player_Color)
         #draw the line to the target
-        pygame.draw.line(screen, Constants.Flee_Line_Color, (self.center.x, self.center.y), (self.currentTarget.center.x, self.currentTarget.center.y), 2)
+        pygame.draw.line(screen, Constants.Flee_Line_Color, (self.center.x, self.center.y), (self.currentTarget.center.x, self.currentTarget.center.y), Constants.Line_Thickness)
 
     #method to update the position and behavior of the player
     def update(self,enemyList):

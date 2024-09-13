@@ -6,6 +6,7 @@ from Player import Player
 from Vector import Vector
 from Agent import Agent
 
+
 #initialize pygame and setting screen size
 pygame.init()
 display = pygame.display.set_mode((Constants.SCREEN_WIDTH,Constants.SCREEN_HEIGHT))
@@ -33,11 +34,11 @@ for i in range(Constants.Enemy_Spawn_Count):
     spawnLoc = (Vector)(xLoc,yLoc)
 
     #Spawning enemy at random location
-    enemyChar = (Enemy)(spawnLoc,Constants.Enemy_Size,Constants.Enemy_Size)
+    enemyChar = (Enemy)(spawnLoc,Constants.Enemy_Speed,Constants.Enemy_Size)
 
     enemyList.append(enemyChar)
 
-
+playerChar.update(enemyList)
 exit = False
 
 while not exit:
