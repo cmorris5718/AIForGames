@@ -6,6 +6,14 @@ from Player import Player
 from Vector import Vector
 from Agent import Agent
 
+###############################
+#
+# Cameron Morris
+# 9/13/2024
+# cmorris@uccs.edu
+#
+# Main class of magical abilities and techniques
+###############################
 
 #initialize pygame and setting screen size
 pygame.init()

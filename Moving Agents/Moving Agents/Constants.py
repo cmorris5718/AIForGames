@@ -1,5 +1,14 @@
 from Vector import Vector
 
+###############################
+#
+# Cameron Morris
+# 9/13/2024
+# cmorris@uccs.edu
+#
+# Constants file for magical game property of dave the magical cheese wizard
+###############################
+
 class Constants:
     #Game Constants
     SCREEN_WIDTH = 800

@@ -1,5 +1,14 @@
 import math
 
+###############################
+#
+# Cameron Morris
+# 9/13/2024
+# cmorris@uccs.edu
+#
+# Vector class
+###############################
+
 class Vector:   
 
     #constructor

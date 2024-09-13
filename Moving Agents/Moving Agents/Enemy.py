@@ -4,6 +4,16 @@ from Constants import Constants
 import pygame
 import random
 
+###############################
+#
+# Cameron Morris
+# 9/13/2024
+# cmorris@uccs.edu
+#
+#Enemy Class Child of Agent
+###############################
+
+
 class Enemy(Agent):
     #constructor for the enemy
     def __init__(self,spawnPosition,enemySize,initialSpeed):

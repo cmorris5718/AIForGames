@@ -2,6 +2,15 @@ from Vector import Vector
 from Constants import Constants
 import pygame
 
+###############################
+#
+# Cameron Morris
+# 9/13/2024
+# cmorris@uccs.edu
+#
+#Agent Parent Class
+###############################
+
 class Agent:
     #constructor for agent class
     def __init__(self,position,initialSpeed,size):

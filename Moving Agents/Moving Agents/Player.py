@@ -3,6 +3,15 @@ from Constants import Constants
 from Agent import Agent
 import pygame
 
+###############################
+#
+# Cameron Morris
+# 9/13/2024
+# cmorris@uccs.edu
+#
+# Player Child of Agent
+###############################
+
 class Player(Agent):
     
     #constructor for player class
