@@ -57,7 +57,7 @@ while not exit:
     
     playerChar.draw(display)
     for val in enemyList:
-        val.draw(display)
+        val.draw(display,playerChar)
     
     pygame.display.update()
     clock.tick(60)

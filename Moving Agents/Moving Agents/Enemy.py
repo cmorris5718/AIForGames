@@ -13,9 +13,13 @@ class Enemy(Agent):
         return ('Enemy Position: ' + str(self.position) + ' Enemy Velocity: ' + str(self.velocity) + ' Enemy Size: ' + str(self.size) + ' Enemy Center: ' + str(self.center))
 
 
-    def draw(self,screen):
+    def draw(self,screen,player):
         #draw the enemy
         super().draw(screen,Constants.Enemy_Color)
+
+        #draw fleeing lying if fleeing
+        if(self.drawTargetLine):
+            pygame.draw.line(screen,Constants.Flee_Line_Color,(self.center.x, self.center.y),(player.center.x,player.center.y),Constants.Line_Thickness)
         
 
     def update(self,player):
@@ -37,16 +41,12 @@ class Enemy(Agent):
  
 
     def wander(self): 
-        
+        #set draw target line to false since not fleeing
+        self.drawTargetLine = False
+
         #add a small random to both X and Y velocity
         self.velocity.x += random.uniform(-Constants.Enemy_Random_Wander_Factor,Constants.Enemy_Random_Wander_Factor)
         self.velocity.y += random.uniform(-Constants.Enemy_Random_Wander_Factor,Constants.Enemy_Random_Wander_Factor)
-        
-        #lmao square snorted some coke with this method
-        #NOTE UNCOMMENT THESE LINES OF CODE TO SEE THE SQUARES DO A FUNNY :)
-        #I WROTE THESE LINES OF CODE AT LIKE 4AM BECAUSE I THOUGHT IT MIGHT BE FUNNY
-        #self.velocity.x = random.uniform(-Constants.Enemy_Random_Wander_Factor,Constants.Enemy_Random_Wander_Factor)
-        #self.velocity.y = random.uniform(-Constants.Enemy_Random_Wander_Factor,Constants.Enemy_Random_Wander_Factor)
 
         #calling parent method to normalize and set velocity to proper speed
         self.velocity = self.setSpeedVec(self.velocity)
