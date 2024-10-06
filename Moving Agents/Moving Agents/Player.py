@@ -1,3 +1,4 @@
+from os import write
 from Vector import Vector
 from Constants import Constants
 from Agent import Agent
@@ -6,7 +7,7 @@ import pygame
 ###############################
 #
 # Cameron Morris
-# 9/13/2024
+# 10/5/2024
 # cmorris@uccs.edu
 #
 # Player Child of Agent
@@ -15,13 +16,14 @@ import pygame
 class Player(Agent):
     
     #constructor for player class
-    def __init__(self,position,initialSpeed,size):
+    def __init__(self,position,initialSpeed,size, image):
         #calling parent constructor
-        super().__init__(position,initialSpeed,size)
+        super().__init__(position,initialSpeed,size,image, Constants.Player_Turn_Radius)
         #Attributes for determining who current target is
         self.currentTarget = None
         self.hasHitCurrentTarget = False
         self.currentEnemyIndex = 0
+        self.surf
 
     #string method for class
     def __str__(self):
@@ -36,6 +38,9 @@ class Player(Agent):
 
     #method to update the position and behavior of the player
     def update(self,enemyList):
+        #clearing applied force
+        self.appliedForce = (Vector)(0,0)
+
         #if player has no target find the closest enemy without any filters
         if(self.currentTarget == None):
             self.findNextEnemy(enemyList)
@@ -49,16 +54,17 @@ class Player(Agent):
         #Calculating the direction towards an enemy
         dirVec = self.currentTarget.position - self.position
 
-        #using parent method to scale vector to proper speed
-        dirVec = self.setSpeedVec(dirVec)
+        dirVec = dirVec.normalize()
 
-        #Setting velocity vector
-        self.velocity = dirVec
-        
+        #scaling dirVec by weight to get applied force
+        dirVec = dirVec.scale(Constants.Player_Chase_Force_Weight)
+
+        self.appliedForce += dirVec
+                
         #calling parent update method
         super().update()
         #checking for collisions
-        if(self.checkAgentCollision(pygame.Rect(self.currentTarget.position.x, self.currentTarget.position.y, self.currentTarget.size, self.currentTarget.size ))):
+        if(self.checkAgentCollision(self.currentTarget.rect)):
             self.hasHitCurrentTarget = True
 
 

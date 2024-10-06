@@ -1,5 +1,6 @@
 import pygame
 import random
+import math
 from Constants import Constants
 from Enemy import Enemy
 from Player import Player
@@ -9,7 +10,7 @@ from Agent import Agent
 ###############################
 #
 # Cameron Morris
-# 9/13/2024
+# 10/5/2024
 # cmorris@uccs.edu
 #
 # Main class of magical abilities and techniques
@@ -21,6 +22,12 @@ display = pygame.display.set_mode((Constants.SCREEN_WIDTH,Constants.SCREEN_HEIGH
 #setting display caption
 pygame.display.set_caption('Moving Agents')
 
+#getting the images
+sheepImage = pygame.image.load('sheep.png')
+dogImage = pygame.image.load('dog.png')
+
+print(math.degrees(math.atan2(-5,5)))
+
 #setting clock
 clock = pygame.time.Clock()
 
@@ -28,7 +35,7 @@ spawnLoc = (Vector)(260,260)
 spawnLoc2 = (Vector)(600,300)
 
 #Creating the player object
-playerChar = (Player)(Constants.Player_Initial_Spawn,Constants.Player_Speed,Constants.Player_Size)
+playerChar = (Player)(Constants.Player_Initial_Spawn,Constants.Player_Speed,Constants.Player_Size,dogImage)
 
 
 enemyList = []
@@ -42,7 +49,7 @@ for i in range(Constants.Enemy_Spawn_Count):
     spawnLoc = (Vector)(xLoc,yLoc)
 
     #Spawning enemy at random location
-    enemyChar = (Enemy)(spawnLoc,Constants.Enemy_Speed,Constants.Enemy_Size)
+    enemyChar = (Enemy)(spawnLoc,Constants.Enemy_Speed,Constants.Enemy_Size,sheepImage)
 
     enemyList.append(enemyChar)
 

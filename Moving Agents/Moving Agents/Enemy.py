@@ -7,7 +7,7 @@ import random
 ###############################
 #
 # Cameron Morris
-# 9/13/2024
+# 10/5/2024
 # cmorris@uccs.edu
 #
 #Enemy Class Child of Agent
@@ -16,8 +16,9 @@ import random
 
 class Enemy(Agent):
     #constructor for the enemy
-    def __init__(self,spawnPosition,enemySize,initialSpeed):
-        super().__init__(spawnPosition,enemySize,initialSpeed)
+    def __init__(self,spawnPosition,enemySize,initialSpeed, image):
+        super().__init__(spawnPosition,enemySize,initialSpeed,image, Constants.Enemy_Turn_Radius)
+        self.surf
 
     def __str__(self):
         return ('Enemy Position: ' + str(self.position) + ' Enemy Velocity: ' + str(self.velocity) + ' Enemy Size: ' + str(self.size) + ' Enemy Center: ' + str(self.center))
@@ -46,7 +47,16 @@ class Enemy(Agent):
     def flee(self,player):
         #calculate direction to run in
         dirVec = self.position - player.position
-        self.velocity = self.setSpeedVec(dirVec)
+
+        #normalizing the direction
+        dirVec = dirVec.normalize()
+
+        #scaling by the weight
+        self.appliedForce = dirVec.scale(Constants.Enemy_Flee_Force_Weight)
+
+        #normalizing the applied force
+        self.appliedForce = self.appliedForce.normalize()
+
         self.drawTargetLine = True
  
 
@@ -54,12 +64,18 @@ class Enemy(Agent):
         #set draw target line to false since not fleeing
         self.drawTargetLine = False
 
-        #add a small random to both X and Y velocity
-        self.velocity.x += random.uniform(-Constants.Enemy_Random_Wander_Factor,Constants.Enemy_Random_Wander_Factor)
-        self.velocity.y += random.uniform(-Constants.Enemy_Random_Wander_Factor,Constants.Enemy_Random_Wander_Factor)
+        dirVec = (Vector) (self.velocity.x, self.velocity.y)
 
-        #calling parent method to normalize and set velocity to proper speed
-        self.velocity = self.setSpeedVec(self.velocity)
+        #add a small random to both X and Y velocity
+        dirVec.x += random.uniform(-Constants.Enemy_Random_Wander_Factor,Constants.Enemy_Random_Wander_Factor)
+        dirVec.y += random.uniform(-Constants.Enemy_Random_Wander_Factor,Constants.Enemy_Random_Wander_Factor)
+
+        #normalizing dirVec
+        dirVec.normalize()
+
+        #Scaling by the wegith
+        self.appliedForce = dirVec.scale(Constants.Enemy_Wander_Force_Weight)
+
         
 
 
