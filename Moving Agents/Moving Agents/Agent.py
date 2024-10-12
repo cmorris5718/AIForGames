@@ -38,8 +38,9 @@ class Agent:
         screen.blit(self.surf, [upperCorner.x, upperCorner.y])
 
         #drawing the agent's velocity line
-        endPos = (Vector)(self.center.x + self.velocity.x * 2, self.center.y + self.velocity.y * 2)
-        pygame.draw.line(screen,Constants.Velocity_Line_Color,(self.center.x, self.center.y),(endPos.x, endPos.y),Constants.Line_Thickness)
+        if(Constants.DEBUG_VELOCITY):
+            endPos = (Vector)(self.center.x + self.velocity.x * 20, self.center.y + self.velocity.y * 20)
+            pygame.draw.line(screen,Constants.Velocity_Line_Color,(self.center.x, self.center.y),(endPos.x, endPos.y),Constants.Line_Thickness)
 
     #updates the position of the agent
     def update(self):
@@ -52,11 +53,9 @@ class Agent:
         diffVec = self.appliedForce - self.velocity.normalize()
 
         if(diffVec.length() < self.turn):
-            print('')
             #setting velocity
             self.velocity = self.appliedForce
         else:
-            print('')
             diffVec = diffVec.normalize()
             diffVec = diffVec.scale(self.turn)
             self.velocity = self.velocity.normalize() + diffVec
@@ -151,7 +150,7 @@ class Agent:
             forceVec.y = self.position.y - Constants.SCREEN_HEIGHT - Constants.Boundary_Threshhold
 
         #scaling total boundary force by the weight
-        forceVec = forceVec.scale(Constants.Boundary_Force_Weight)
+        forceVec = forceVec.scale(Constants.Boundary_Force_Weight * int(Constants.ENABLE_BOUNDARIES))
 
         #Adding calculated force to applied forces
         self.appliedForce += forceVec

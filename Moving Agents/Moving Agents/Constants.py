@@ -3,7 +3,7 @@ from Vector import Vector
 ###############################
 #
 # Cameron Morris
-# 10/5/2024
+# 10/12/2024
 # cmorris@uccs.edu
 #
 # Constants file for magical game property of dave the magical cheese wizard
@@ -38,10 +38,30 @@ class Constants:
     Enemy_Color = (0,255,0)
     Enemy_Detection_Dist = 200
     Enemy_Random_Wander_Factor = 6
-    Enemy_Spawn_Count = 10
+    Enemy_Spawn_Count = 100
     Enemy_Wander_Force_Weight = 0.25
-    Enemy_Flee_Force_Weight = 0.25
+    Enemy_Flee_Force_Weight = 0.4
     Enemy_Turn_Radius = 0.1
+    Alignment_Force_Weight = 0.3
+    Cohesion_Force_Weight = 0.3
+    Seperation_Force_Weight = 0.4
+    Neighbor_Distance_Criteria = 50
+    Neighbor_Line_Color = (0,255,0)
+
+    #Debugging
+    ENABLE_DOG = True
+    ENABLE_ALIGNMENT = True
+    ENABLE_COHESION = True
+    ENABLE_SEPARATION = True
+    ENABLE_BOUNDARIES = True
+
+    DEBUGGING = True
+    DEBUG_LINE_WIDTH = 1
+    DEBUG_VELOCITY = DEBUGGING
+    DEBUG_BOUNDARIES = DEBUGGING
+    DEBUG_NEIGHBORS = DEBUGGING
+    DEBUG_DOG_INFLUENCE = DEBUGGING
+    DEBUG_BOUNDING_RECTS = DEBUGGING
 
 
 
