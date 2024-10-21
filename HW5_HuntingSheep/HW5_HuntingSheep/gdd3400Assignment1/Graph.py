@@ -151,10 +151,11 @@ class Graph():
 		endNode = self.getNodeFromPoint(end)
 		queue = [startNode]
 		startNode.isVisited = True
-		startNode.cost = 0
+		startNode.costFromStart = 0
 		while len(queue) > 0:
 			#Sort the queue
-			queue.sort(key=lambda node : node.cost)
+			print(len(queue))
+			queue.sort(key=lambda node : node.costFromStart)
 			currentNode = queue.pop(0)
 			currentNode.isExplored = True
 			
@@ -166,12 +167,13 @@ class Graph():
 			for neighbor in currentNode.neighbors:
 				if(neighbor.isWalkable):
 					cost = self.setWeight(currentNode, neighbor)		
-					if(cost < neighbor.cost):
-						neighbor.cost = cost
+					if(cost < neighbor.costFromStart):
+						neighbor.costFromStart = cost
 						neighbor.backNode = currentNode
 					if not neighbor.isVisited:
 						queue.append(neighbor)
 						neighbor.isVisited = True
+						neighbor.backNode = currentNode
 
 		# Return empty path indicating no path was found
 		return []
@@ -180,10 +182,10 @@ class Graph():
 		#Check if the movement is diagonal
 		if(startNode.x != endNode.x and startNode.y != endNode.y):
 			#If not diagonal then set cost to 1
-			return startNode.cost + 1
+			return startNode.costFromStart + 1
 		else:
 			#The movement is diagonal if we made it to this point so set distance to be root 2 or 1.41
-			return startNode.cost + 0.75
+			return startNode.costFromStart + 0.75
 			
 
 	def findPath_AStar(self, start, end):
@@ -191,7 +193,36 @@ class Graph():
 		print("A_STAR")
 		self.reset()
 
-		
+		startNode = self.getNodeFromPoint(start)
+		endNode = self.getNodeFromPoint(end)
+		queue = [startNode]
+		startNode.isVisited = True
+		startNode.costFromStart = 0
+		iterations = 0
+		while len(queue) > 0:
+			queue.sort(key=lambda node : node.cost)
+
+			currentNode = queue.pop(0)
+			currentNode.isExplored = True
+			currentNode.costToEnd = self.costToEnd(currentNode, endNode)
+			
+			if(currentNode is endNode):
+				return self.buildPath(currentNode)
+			
+			for neighbor in currentNode.neighbors:
+				if(neighbor.isWalkable):
+					startCos = self.setWeight(currentNode, neighbor)
+					endCos = self.costToEnd(neighbor, endNode)
+					totalCos = startCos + endCos
+					if(totalCos < neighbor.cost):
+						neighbor.costFromStart = startCos
+						neighbor.costToEnd = endCos
+						neighbor.cost = totalCos;
+						if(currentNode is not startNode):
+							neighbor.backNode = currentNode
+					if not neighbor.isVisited:
+						queue.append(neighbor)
+						neighbor.isVisited = True
 
 			
 		# TODO: Implement A Star Search
@@ -233,6 +264,7 @@ class Graph():
 					if not neighbor.isVisited:
 						queue.append(neighbor)
 						neighbor.isVisited = True
+						neighbor.backNode = currentNode
 
 		# TODO: Implement Best First Search
 		
