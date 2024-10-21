@@ -1,3 +1,4 @@
+from re import L
 import Constants
 import Node
 import pygame
@@ -120,7 +121,6 @@ class Graph():
 		# create a queue 
 		queue = [startNode]
 		startNode.isVisited = True
-		iterations = 0
 		while len(queue) > 0:
 			# Get the current node
 			currentNode = queue.pop(0)
@@ -146,9 +146,44 @@ class Graph():
 		self.reset()
 
 		# TODO: Implement Djikstra's Search
-		
+		startNode = self.getNodeFromPoint(start)
+		endNode = self.getNodeFromPoint(end)
+		queue = [startNode]
+		startNode.isVisited = True
+		startNode.cost = 0
+		while len(queue) > 0:
+			#Sort the queue
+			queue.sort(key=lambda node : node.cost)
+			currentNode = queue.pop(0)
+			currentNode.isExplored = True
+			
+			#check if end node
+			if(currentNode is endNode):
+				return self.buildPath(currentNode)
+
+			#add the neighbors of the currentNode
+			for neighbor in currentNode.neighbors:
+				if(neighbor.isWalkable):
+					cost = self.setWeight(currentNode, neighbor)		
+					if(cost < neighbor.cost):
+						neighbor.cost = cost
+						neighbor.backNode = currentNode
+					if not neighbor.isVisited:
+						queue.append(neighbor)
+						neighbor.isVisited = True
+
 		# Return empty path indicating no path was found
 		return []
+	
+	def setWeight(self, startNode, endNode):
+		#Check if the movement is diagonal
+		if(startNode.x != endNode.x and startNode.y != endNode.y):
+			#If not diagonal then set cost to 1
+			return startNode.cost + 1
+		else:
+			#The movement is diagonal if we made it to this point so set distance to be root 2 or 1.41
+			return startNode.cost + 0.75
+			
 
 	def findPath_AStar(self, start, end):
 		""" A Star Search """
