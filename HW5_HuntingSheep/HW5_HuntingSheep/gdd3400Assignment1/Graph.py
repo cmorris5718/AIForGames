@@ -180,12 +180,11 @@ class Graph():
 	
 	def setWeight(self, startNode, endNode):
 		#Check if the movement is diagonal
-		if(startNode.x != endNode.x and startNode.y != endNode.y):
-			#If not diagonal then set cost to 1
+		if(startNode.x == endNode.x or startNode.y == endNode.y):
 			return startNode.costFromStart + 1
 		else:
 			#The movement is diagonal if we made it to this point so set distance to be root 2 or 1.41
-			return startNode.costFromStart + 0.75
+			return startNode.costFromStart + 1.41
 			
 
 	def findPath_AStar(self, start, end):
