@@ -1,4 +1,5 @@
 from re import L
+from tkinter import CURRENT
 import Constants
 import Node
 import pygame
@@ -190,15 +191,48 @@ class Graph():
 		print("A_STAR")
 		self.reset()
 
+		
+
+			
 		# TODO: Implement A Star Search
 		
 		# Return empty path indicating no path was found
 		return []
 
+	def costToEnd(self, current, end):
+		currVec = Vector(current.x, current.y)
+		endVec = Vector(end.x, end.y)
+		distVec = endVec - currVec
+		return distVec.length()
+
 	def findPath_BestFirst(self, start, end):
 		""" Best First Search """
 		print("BEST_FIRST")
 		self.reset()
+		
+
+		startNode = self.getNodeFromPoint(start)
+		endNode = self.getNodeFromPoint(end)
+		queue = [startNode]
+		startNode.isVisited = True
+		while len(queue) > 0:
+			queue.sort(key=lambda node : node.costToEnd)
+			currentNode = queue.pop(0)
+			currentNode.isExplored = True
+			currentNode.costToEnd = self.costToEnd(currentNode,endNode)
+			
+			if(currentNode is endNode):
+				return self.buildPath(currentNode)
+			
+			for neighbor in currentNode.neighbors:
+				if(neighbor.isWalkable):
+					cost = self.costToEnd(neighbor, endNode)
+					if(cost < neighbor.costToEnd):
+						neighbor.costToEnd = cost
+						neighbor.backNode = currentNode
+					if not neighbor.isVisited:
+						queue.append(neighbor)
+						neighbor.isVisited = True
 
 		# TODO: Implement Best First Search
 		
