@@ -113,6 +113,29 @@ class Graph():
 		self.reset()
 
 		# TODO: Implement Breadth-first Search
+		# Create start and end nodes
+		startNode = self.getNodeFromPoint(start)
+		endNode = self.getNodeFromPoint(end)
+		
+		# create a queue 
+		queue = [startNode]
+		startNode.isVisited = True
+		iterations = 0
+		while len(queue) > 0:
+			# Get the current node
+			currentNode = queue.pop(0)
+			currentNode.isExplored = True
+			
+			#check if current node is the end node
+			if(currentNode is endNode):
+				return self.buildPath(currentNode)
+				
+			# If we're not at the end add the neighbors of the current node
+			for neighbor in currentNode.neighbors:
+				if(neighbor.isWalkable and neighbor.isVisited == False):
+					queue.append(neighbor)
+					neighbor.backNode = currentNode
+					neighbor.isVisited = True
 
 		# Return empty path indicating no path was found
 		return []
