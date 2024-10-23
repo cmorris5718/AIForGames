@@ -109,12 +109,12 @@ class Graph():
 			path[-1].isEnd = True
 		return path
 
+	#Uses Breadth first search to determine path
 	def findPath_Breadth(self, start, end):
 		""" Breadth Search """
 		print("BREADTH")
 		self.reset()
 
-		# TODO: Implement Breadth-first Search
 		# Create start and end nodes
 		startNode = self.getNodeFromPoint(start)
 		endNode = self.getNodeFromPoint(end)
@@ -149,14 +149,17 @@ class Graph():
 		# TODO: Implement Djikstra's Search
 		startNode = self.getNodeFromPoint(start)
 		endNode = self.getNodeFromPoint(end)
+		# Create the queue
 		queue = [startNode]
+		#Set is visited and cost 
 		startNode.isVisited = True
 		startNode.costFromStart = 0
 		while len(queue) > 0:
 			#Sort the queue
-			print(len(queue))
 			queue.sort(key=lambda node : node.costFromStart)
+			#Get the next node from the queue
 			currentNode = queue.pop(0)
+			#Set explored to true
 			currentNode.isExplored = True
 			
 			#check if end node
@@ -165,11 +168,15 @@ class Graph():
 
 			#add the neighbors of the currentNode
 			for neighbor in currentNode.neighbors:
+				# Check if neighbor is a valid node
 				if(neighbor.isWalkable):
+					#Set the weight
 					cost = self.setWeight(currentNode, neighbor)		
 					if(cost < neighbor.costFromStart):
+						#If new weight is less than previous weight assign new node
 						neighbor.costFromStart = cost
 						neighbor.backNode = currentNode
+					#If the neighbor isn't in the queue add it to the queue
 					if not neighbor.isVisited:
 						queue.append(neighbor)
 						neighbor.isVisited = True
@@ -178,6 +185,7 @@ class Graph():
 		# Return empty path indicating no path was found
 		return []
 	
+	# Returns cost for nodes based on if it's NSEW movement or diagonal movement
 	def setWeight(self, startNode, endNode):
 		#Check if the movement is diagonal
 		if(startNode.x == endNode.x or startNode.y == endNode.y):
@@ -187,38 +195,51 @@ class Graph():
 			return startNode.costFromStart + 1.41
 			
 
+	#Calculates a path using A star method
 	def findPath_AStar(self, start, end):
 		""" A Star Search """
 		print("A_STAR")
 		self.reset()
 
+		#Create the start and end nodes 
 		startNode = self.getNodeFromPoint(start)
 		endNode = self.getNodeFromPoint(end)
+		# Create the queue
 		queue = [startNode]
+		#Set initial cost
 		startNode.isVisited = True
 		startNode.costFromStart = 0
-		iterations = 0
 		while len(queue) > 0:
+			#Sort the queue
 			queue.sort(key=lambda node : node.cost)
 
+			#Get the next item in the queue
 			currentNode = queue.pop(0)
 			currentNode.isExplored = True
+			#Set cost to end based on theoretical cost
 			currentNode.costToEnd = self.costToEnd(currentNode, endNode)
 			
+			#Check if we're the end node 
 			if(currentNode is endNode):
 				return self.buildPath(currentNode)
 			
+			# Check neighbors
 			for neighbor in currentNode.neighbors:
+				#Check if neighbor is a valid node
 				if(neighbor.isWalkable):
+					# Calculate the start and end costs
 					startCos = self.setWeight(currentNode, neighbor)
 					endCos = self.costToEnd(neighbor, endNode)
+					#Create the totale cost
 					totalCos = startCos + endCos
+					#IF total cost is less then the current cost to get to the node set new cost aned backpointer
 					if(totalCos < neighbor.cost):
 						neighbor.costFromStart = startCos
 						neighbor.costToEnd = endCos
 						neighbor.cost = totalCos;
 						if(currentNode is not startNode):
 							neighbor.backNode = currentNode
+					#If not in the queue add to the queue
 					if not neighbor.isVisited:
 						queue.append(neighbor)
 						neighbor.isVisited = True
@@ -229,43 +250,49 @@ class Graph():
 		# Return empty path indicating no path was found
 		return []
 
+	# Calculates and returns a theoretical cost to the end assumes that all distances are 1 to underestimate
 	def costToEnd(self, current, end):
 		currVec = Vector(current.x, current.y)
 		endVec = Vector(end.x, end.y)
 		distVec = endVec - currVec
 		return distVec.length()
 
+	# Uses best first search to find a path
 	def findPath_BestFirst(self, start, end):
 		""" Best First Search """
 		print("BEST_FIRST")
 		self.reset()
 		
-
+		# create start and end nodes
 		startNode = self.getNodeFromPoint(start)
 		endNode = self.getNodeFromPoint(end)
+		#create the queue
 		queue = [startNode]
 		startNode.isVisited = True
 		while len(queue) > 0:
+			#Sort the queue
 			queue.sort(key=lambda node : node.costToEnd)
+			#check the next node in the queue
 			currentNode = queue.pop(0)
 			currentNode.isExplored = True
 			currentNode.costToEnd = self.costToEnd(currentNode,endNode)
 			
+			#check if at the end
 			if(currentNode is endNode):
 				return self.buildPath(currentNode)
 			
+			#check neighbors for a lower cost and set backnode
 			for neighbor in currentNode.neighbors:
 				if(neighbor.isWalkable):
 					cost = self.costToEnd(neighbor, endNode)
 					if(cost < neighbor.costToEnd):
 						neighbor.costToEnd = cost
 						neighbor.backNode = currentNode
+					#If neighbor not in queue add to the queue
 					if not neighbor.isVisited:
 						queue.append(neighbor)
 						neighbor.isVisited = True
 						neighbor.backNode = currentNode
-
-		# TODO: Implement Best First Search
 		
 		# Return empty path indicating no path was found
 		return []
