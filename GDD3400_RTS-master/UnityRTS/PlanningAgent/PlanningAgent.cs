@@ -164,14 +164,23 @@ namespace GameManager
                 if (unit != null && Gold >= Constants.COST[unitType])
                 {
                     // Find the closest build position to this worker's position (DUMB) and 
+                    float dist = float.MaxValue;
+                    Vector3Int pos = buildPositions[0];
                     // build the base there
                     foreach (Vector3Int toBuild in buildPositions)
                     {
                         if (GameManager.Instance.IsBoundedAreaBuildable(unitType, toBuild))
                         {
-                            Build(unit, toBuild, unitType);
-                            return;
+                            if ((new Vector3(toBuild.x, toBuild.y, toBuild.z) - unit.GridPosition).magnitude < dist)
+                            {
+                                dist = (new Vector3(toBuild.x, toBuild.y, toBuild.z) - unit.GridPosition).magnitude;
+                                pos = toBuild;
+                            }
                         }
+                    }
+                    if (pos != null)
+                    {
+                        Build(unit, pos, unitType);
                     }
                 }
             }
@@ -312,6 +321,30 @@ namespace GameManager
         }
 
         /// <summary>
+        /// Calculates the closest unit from a start 
+        /// </summary>
+        /// <param name="startUnit"></param>
+        /// <param name="units"></param>
+        /// <returns></returns>
+        private int FindClosestUnit(int startUnit, List<int> units)
+        {
+            float dist = float.MaxValue;
+            Unit sUnit = GameManager.Instance.GetUnit(startUnit);
+            int result = -1;
+            foreach(int unit in units)
+            {
+                Unit unitObj = GameManager.Instance.GetUnit(unit);
+                Vector3 distVec = sUnit.GridPosition - unitObj.GridPosition;
+                if(distVec.magnitude < dist)
+                {
+                    result = unit;
+                    dist = distVec.magnitude;
+                }
+            }
+            return result;
+        }
+
+        /// <summary>
         /// Updates the game state for the Agent - called once per frame for GameManager
         /// Pulls all of the agents from the game and identifies who they belong to
         /// </summary>
@@ -349,189 +382,129 @@ namespace GameManager
         public override void Update()
         {
             UpdateGameState();
-            
+
             switch (state)
             {
                 case AgentState.InitialBuild:
-                    InitialBaseBuildUpdate();
-                    break;
+                    Debug.Log("Before Build Base");
+                    BuildBase();
+                    Debug.Log("Checking for switch");
+                    if (myBases.Count > 0 && myBarracks.Count > 0 && myRefineries.Count > 0)
+                    {
+                        Debug.Log("Switching");
+                        state = AgentState.ArmyBuilding;
+                    }
+                break;
                 case AgentState.ArmyBuilding:
-                    ArmyBuildUpdate();
-                    break;
+                    Debug.Log("Before Army Build");
+                    BuildArmy();
+                    Debug.Log("Checking for switch 2");
+                    if (myBases.Count == 0 || myBarracks.Count == 0 || myRefineries.Count == 0)
+                    {
+                        Debug.Log("Switching 2");
+                        state = AgentState.InitialBuild;
+                    }
+                break;
                 case AgentState.Attacking:
-                    AttackingUpdate();
-                    break;
-
+                    Debug.Log("Before Attack");
+                    Attack();
+                    Debug.Log("Checking for switch 3");
+                    if (myArchers.Count + mySoldiers.Count < enemyArchers.Count + enemySoldiers.Count)
+                    {
+                        Debug.Log("Switching 3");
+                        state = AgentState.ArmyBuilding;
+                    }
+                break;
             }
         }
 
-        private void GatherResources()
+        private void BuildBase()
         {
-			Debug.Log("Gathering Resources");
-            Debug.Log("Finding Closest Mine");
-            //Finds closest mine
-			GameObject mainBaseGO = GameManager.Instance.GetUnit(mainBaseNbr).gameObject;
-            int closestMine= 0;
-            float dist = float.MaxValue;
-            foreach(int mineNbr in mines)
+            Debug.Log("Before mine check");
+            //Calculate closest mine
+
+            int closeMine = -1;
+            if(myWorkers.Count > 0)
             {
-                GameObject mineGO = GameManager.Instance.GetUnit(mineNbr).gameObject;
-                if ((mainBaseGO.transform.position - mineGO.transform.position).magnitude < dist)
-                {
-                    closestMine = mineNbr;
-                }
-            }
+				closeMine = FindClosestUnit(myWorkers[0], mines);
+			}
             
-            //Sends all workers to get resources
-			foreach (int workerNbr in myWorkers)
-			{
-				Unit workerUnit = GameManager.Instance.GetUnit(workerNbr);
-				Unit baseUnit = GameManager.Instance.GetUnit(mainBaseNbr);
-                Unit mineUnit = GameManager.Instance.GetUnit(closestMine);
-
-				if (workerUnit != null && workerUnit.CurrentAction == UnitAction.IDLE)
-				{
-					Gather(workerUnit, mineUnit, baseUnit);
-				}
-			}
-		}
-
-        private void InitialBaseBuildUpdate()
-        {
-            Debug.Log("InitialBaseUpdate");
-            //Setting reference to main mine
-            if(mines.Count > 0)
-            {
-                mainMineNbr = mines[0];
-			}
-            else
-            {
-                mainMineNbr = -1;
-            }
-
-            //If we don't have a base make one bc it's a prereq for everything
+            Debug.Log("Before 1st if");
+            //If there's a valid closest mine 
             if(myBases.Count == 0)
             {
-                Debug.Log("MainBaseCreation");
                 BuildBuilding(UnitType.BASE);
             }
-
             if( myBases.Count > 0)
             {
                 mainBaseNbr = myBases[0];
             }
-
-			//If we don't have a barracks make one
-			if (myBarracks.Count == 0)
-			{
-                Debug.Log("BarracksCreation");
-				BuildBuilding(UnitType.BARRACKS);
-			}
-
-            if(myRefineries.Count == 0)
-            {
-                Debug.Log("Building First Refinery");
-                BuildBuilding(UnitType.REFINERY);
-            }
-
-			//Train workers in the base
-			foreach (int baseNbr in myBases)
-			{
-				// Get the base unit
-				Unit baseUnit = GameManager.Instance.GetUnit(baseNbr);
-
-				// If the base exists, is idle, we need a worker, and we have gold
-				if (baseUnit != null && baseUnit.IsBuilt
-									 && baseUnit.CurrentAction == UnitAction.IDLE
-									 && Gold >= Constants.COST[UnitType.WORKER]
-									 && myWorkers.Count < MAX_NBR_WORKERS)
-				{
-					Debug.Log("Training Worker");
-					Train(baseUnit, UnitType.WORKER);
-				}
-			}
-
-            Unit mainMine = GameManager.Instance.GetUnit(mainMineNbr);
-            Unit mainBase = GameManager.Instance.GetUnit(mainBaseNbr);
-
-            GatherResources();
-
-            //If we have 7 or more workers start to train an army
-            if (myWorkers.Count >= 7)
-            {
-                Debug.Log("Worker count hit switching states");
-                state = AgentState.ArmyBuilding;
-            }
-
-		}
-
-        private void ArmyBuildUpdate()
-        {
-            Debug.Log("ArmyBuildingUpdate");
-            //If we don't have a barracks make one
-            if(myBarracks.Count == 0)
-            {
-                Debug.Log("Building Initial Barracks");
-                BuildBuilding(UnitType.BARRACKS);
-            }
-
-            if(myBarracks.Count > 2)
-            {
-                Debug.Log("Building Secondary Barrakcs");
-                BuildBuilding(UnitType.BARRACKS);
-            }
-
-            //check if we should make another barracks
-            //Keeps a ratio of 1 Barracks : 10 Units
-            bool makeBase = myBarracks.Count * 10 < myArchers.Count + mySoldiers.Count ? true : false;
-
-            if (makeBase)
-            {
-                if(Gold >= Constants.COST[UnitType.BASE]) { BuildBuilding(UnitType.BASE); }
-                else { state = AgentState.GatherResources; }
-            }
             else
             {
-                //Decide if we should make a soldier or an archer
-                //Keep an even distribution of them
-                bool makeSoldier = mySoldiers.Count > myArchers.Count ? false : true;
-
-                foreach (int barracksNbr in myBarracks)
+                mainBaseNbr = -1;
+            }
+            Debug.Log("Before 2nd if");
+            if (myBarracks.Count < 1 && myBases.Count > 0)
+            {
+                BuildBuilding(UnitType.BARRACKS);
+            }
+            Debug.Log("Before 3rd if");
+            if (myRefineries.Count < 1 && myBases.Count > 0)
+            {
+                BuildBuilding(UnitType.REFINERY);
+            }
+            Debug.Log("Before 1st foreach");
+            foreach (int baseNum in myBases)
+            {
+                Unit unit = GameManager.Instance.GetUnit(baseNum);
+                if(unit != null && unit.CurrentAction == UnitAction.IDLE && Gold >= Constants.COST[UnitType.WORKER] && myWorkers.Count < 20)
                 {
-                    // Get the barracks
-                    Unit barracksUnit = GameManager.Instance.GetUnit(barracksNbr);
+                    Train(unit, UnitType.WORKER);
+                }
+            }
+			Unit myMine = GameManager.Instance.GetUnit(closeMine);
+            Unit myBase = GameManager.Instance.GetUnit(mainBaseNbr);
+			foreach (int workerNum in myWorkers)
+            {
+                Unit worker = GameManager.Instance.GetUnit(workerNum);
+                if(worker != null && worker.CurrentAction != UnitAction.IDLE)
+                {
+                    continue;
+                }
 
-                    //Check if this barracks is eligible to create a unit
-                    if (barracksUnit != null && barracksUnit.IsBuilt && barracksUnit.CurrentAction == UnitAction.IDLE)
+                Gather(worker, myMine, myBase);
+            }
+        }
+
+        private void BuildArmy()
+        {
+            foreach (int barracks in myBarracks)
+            {
+                Unit barrack = GameManager.Instance.GetUnit(barracks);
+                if (barrack != null && barrack.IsBuilt && barrack.CurrentAction == UnitAction.IDLE)
+                {
+                    float val = (float)mySoldiers.Count / (float)myArchers.Count;
+                    //ensure we have 2x archers to soldiers
+                    if (val > 0.5)
                     {
-                        if (makeSoldier)
-                        {
-                            if (Gold >= Constants.COST[UnitType.SOLDIER])
-                            {
-                                Train(barracksUnit, UnitType.SOLDIER);
-                            }
-							else { state = AgentState.GatherResources; }
-						}
-                        else
-                        {
-                            if (Gold >= Constants.COST[UnitType.ARCHER])
-                            {
-                                Train(barracksUnit, UnitType.ARCHER);
-                            }
-							else { state = AgentState.GatherResources; }
-						}
+                        Train(barrack, UnitType.ARCHER);
+                    }
+                    else
+                    {
+                        Train(barrack, UnitType.SOLDIER);
                     }
                 }
             }
-		}
+            Attack();
+        }
 
-        private void AttackingUpdate()
+        private void Attack()
         {
-            Debug.Log("Attacking");
-			// For any troops, attack the enemy
-			AttackEnemy(mySoldiers);
-			AttackEnemy(myArchers);
-		}
+            AttackEnemy(mySoldiers);
+            AttackEnemy(myArchers);
+        }
+
+        
         #endregion
     }
 }
