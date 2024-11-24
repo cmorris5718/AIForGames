@@ -428,6 +428,12 @@ namespace GameManager
 				BuildBuilding(UnitType.BARRACKS);
 			}
 
+            if(myRefineries.Count == 0)
+            {
+                Debug.Log("Building First Refinery");
+                BuildBuilding(UnitType.REFINERY);
+            }
+
 			//Train workers in the base
 			foreach (int baseNbr in myBases)
 			{
