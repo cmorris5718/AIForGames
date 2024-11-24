@@ -141,6 +141,14 @@
             There are multiple rounds in a single match between two agents.
             </summary>
         </member>
+        <member name="M:GameManager.PlanningAgent.FindClosestUnit(System.Int32,System.Collections.Generic.List{System.Int32})">
+            <summary>
+            Calculates the closest unit from a start 
+            </summary>
+            <param name="startUnit"></param>
+            <param name="units"></param>
+            <returns></returns>
+        </member>
         <member name="M:GameManager.PlanningAgent.UpdateGameState">
             <summary>
             Updates the game state for the Agent - called once per frame for GameManager
