@@ -43,3 +43,9 @@ C:\GitRepos\AIForGames\GDD3400_RTS-master\UnityRTS\ForceUnityToReleaseDLL\obj\De
 C:\GitRepos\AIForGames\GDD3400_RTS-master\UnityRTS\ForceUnityToReleaseDLL\obj\Debug\ForceUnityToReleaseDLL.csproj.CoreCompileInputs.cache
 C:\GitRepos\AIForGames\GDD3400_RTS-master\UnityRTS\ForceUnityToReleaseDLL\obj\Debug\ForceUnityToReleaseDLL.dll
 C:\GitRepos\AIForGames\GDD3400_RTS-master\UnityRTS\ForceUnityToReleaseDLL\obj\Debug\ForceUnityToReleaseDLL.pdb
+E:\GitRepos\AIForGames\GDD3400_RTS-master\UnityRTS\RTS\Assets\ForceUnityToReleaseDLL.dll
+E:\GitRepos\AIForGames\GDD3400_RTS-master\UnityRTS\RTS\Assets\ForceUnityToReleaseDLL.pdb
+E:\GitRepos\AIForGames\GDD3400_RTS-master\UnityRTS\ForceUnityToReleaseDLL\obj\Debug\ForceUnityToReleaseDLL.csproj.AssemblyReference.cache
+E:\GitRepos\AIForGames\GDD3400_RTS-master\UnityRTS\ForceUnityToReleaseDLL\obj\Debug\ForceUnityToReleaseDLL.csproj.CoreCompileInputs.cache
+E:\GitRepos\AIForGames\GDD3400_RTS-master\UnityRTS\ForceUnityToReleaseDLL\obj\Debug\ForceUnityToReleaseDLL.dll
+E:\GitRepos\AIForGames\GDD3400_RTS-master\UnityRTS\ForceUnityToReleaseDLL\obj\Debug\ForceUnityToReleaseDLL.pdb
