@@ -389,7 +389,7 @@ namespace GameManager
                     Debug.Log("Before Build Base");
                     BuildBase();
                     Debug.Log("Checking for switch");
-                    if (myBases.Count > 0 && myBarracks.Count > 0 && myRefineries.Count > 0)
+                    if (myBases.Count > 0 && myBarracks.Count > 2 && myRefineries.Count > 2)
                     {
                         Debug.Log("Switching");
                         state = AgentState.ArmyBuilding;
@@ -444,12 +444,12 @@ namespace GameManager
                 mainBaseNbr = -1;
             }
             Debug.Log("Before 2nd if");
-            if (myBarracks.Count < 1 && myBases.Count > 0)
+            if (myBarracks.Count < 3 && myBases.Count > 0)
             {
                 BuildBuilding(UnitType.BARRACKS);
             }
             Debug.Log("Before 3rd if");
-            if (myRefineries.Count < 1 && myBases.Count > 0)
+            if (myRefineries.Count < 3 && myBases.Count > 0)
             {
                 BuildBuilding(UnitType.REFINERY);
             }
@@ -485,7 +485,7 @@ namespace GameManager
                 {
                     float val = (float)mySoldiers.Count / (float)myArchers.Count;
                     //ensure we have 2x archers to soldiers
-                    if (val > 0.5)
+                    if (val <  2)
                     {
                         Train(barrack, UnitType.ARCHER);
                     }
