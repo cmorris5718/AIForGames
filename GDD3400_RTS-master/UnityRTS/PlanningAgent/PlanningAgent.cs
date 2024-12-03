@@ -4,6 +4,8 @@ using GameManager.EnumTypes;
 using GameManager.GameElements;
 using UnityEngine;
 using System;
+using System.Net;
+using System.Runtime.InteropServices;
 
 /////////////////////////////////////////////////////////////////////////////
 // This is the Moron Agent
@@ -383,45 +385,187 @@ namespace GameManager
         {
             UpdateGameState();
 
-            switch (state)
+            Dictionary<string, float> dict = UpdateHeuristics();
+
+            float maxValue = float.MinValue;
+            string bestAction = "";
+            foreach(KeyValuePair<string, float> kvp in dict)
+            {
+                if (kvp.Value > maxValue)
+                {
+                    maxValue = kvp.Value;
+                    bestAction = kvp.Key;                    
+                }
+            }
+
+            Debug.LogWarning("Best Action is: " + bestAction);
+            string ovride = "";
+            switch(bestAction)
+            {
+                case "BaseBuild":
+                    state = AgentState.InitialBuild;
+                    ovride = bestAction;
+                    break;
+                case "BarrackBuild":
+                    state = AgentState.InitialBuild;
+					ovride = bestAction;
+					break;
+                case "ArmyBuild":
+                    state = AgentState.ArmyBuilding;
+                    break;
+                case "Attack":
+                    state = AgentState.Attacking;
+                    break;
+                case "GatherGoldHeur":
+                    state = AgentState.InitialBuild;
+                    ovride = "GatherGold";
+					break;
+                case "Refine":
+                    state = AgentState.InitialBuild;
+                    ovride = bestAction;
+                    break;
+                case "":
+                    //Debug.LogWarning("Not best action go Fuck thyself");
+                    break;
+			}
+            
+			switch (state)
             {
                 case AgentState.InitialBuild:
-                    Debug.Log("Before Build Base");
-                    BuildBase();
-                    Debug.Log("Checking for switch");
+                    BuildBase(ovride);                    
                     if (myBases.Count > 0 && myBarracks.Count > 2 && myRefineries.Count > 2)
                     {
-                        Debug.Log("Switching");
                         state = AgentState.ArmyBuilding;
                     }
                 break;
                 case AgentState.ArmyBuilding:
-                    Debug.Log("Before Army Build");
                     BuildArmy();
-                    Debug.Log("Checking for switch 2");
+                    
                     if (myBases.Count == 0 || myBarracks.Count == 0 || myRefineries.Count == 0)
                     {
-                        Debug.Log("Switching 2");
                         state = AgentState.InitialBuild;
                     }
+                    
                 break;
                 case AgentState.Attacking:
-                    Debug.Log("Before Attack");
-                    Attack();
-                    Debug.Log("Checking for switch 3");
+                    Attack();                    
                     if (myArchers.Count + mySoldiers.Count < enemyArchers.Count + enemySoldiers.Count)
                     {
-                        Debug.Log("Switching 3");
                         state = AgentState.ArmyBuilding;
-                    }
+                    }                    
                 break;
             }
         }
 
-        private void BuildBase()
+        private Dictionary<string, float> UpdateHeuristics()
         {
-            Debug.Log("Before mine check");
+            Dictionary<string, float> heuristicsDict = new Dictionary<string, float>
+            {
+                { "BaseBuild", CalcBaseHeur() },
+                { "BarrackBuild", CalcBarrackHeur() },
+				{ "Refine" , CalcRefHeur() },
+				{ "ArmyBuild", CalcArmyHeur()},
+                { "Attack", CalcAttackHeur()},
+                { "GatherGold" , GatherGoldHeur()},                
+			};
+
+			// Print dictionary efficiently
+			foreach (var entry in heuristicsDict)
+			{
+				Debug.LogWarning(($"{entry.Key} {entry.Value}"));
+			}
+
+			return heuristicsDict;
+        }
+
+        private float CalcBaseHeur()
+        {
+			float baseHeur = Mathf.Clamp(1 - myBases.Count, 0, 1);
+			float goldCheck = Mathf.Clamp(Gold - Constants.COST[UnitType.BASE], 0, 1);
+
+			return baseHeur * goldCheck;
+		}
+
+        private float CalcBarrackHeur()
+        {
+            float barrHeur = Mathf.Clamp(1 - myBarracks.Count, 0, 1);
+            float goldCheck = Mathf.Clamp(Gold - Constants.COST[UnitType.BARRACKS], 0, 1);
+            float barrVsOpp = Mathf.Clamp(enemyBarracks.Count - myBarracks.Count, 0, 1);
+            float maxGold = Mathf.Clamp(1000f - Gold, 0, 1);
+
+            return Mathf.Clamp((barrHeur + barrVsOpp + maxGold) * goldCheck, 0, 1);
+        }
+
+        private float CalcArmyHeur()
+        {
+            float targetArmySize = 15f;
+            float armyHeur = Mathf.Clamp(targetArmySize - mySoldiers.Count + myArchers.Count, 0, 1);
+            float armyVsOpp = Mathf.Clamp((enemyArchers.Count + enemySoldiers.Count) - (mySoldiers.Count + myArchers.Count), 0, 1);
+            float goldCheck = Mathf.Clamp(Gold - Constants.COST[UnitType.SOLDIER], 0, 1);
+
+            return Mathf.Clamp((armyHeur + armyVsOpp) * goldCheck, 0, 1);
+		}
+
+        private float CalcAttackHeur()
+        {
+            return Mathf.Clamp((myArchers.Count + mySoldiers.Count) - (enemySoldiers.Count + enemyArchers.Count), 0, 1);
+        }
+
+        private float GatherGoldHeur()
+        {
+            float targetGold = 500;
+            return Mathf.Clamp(targetGold - Gold, 0, 1);
+        }
+
+        private float CalcRefHeur()
+        {
+            float refHeur = Mathf.Clamp(1 - myRefineries.Count, 0, 1);
+            float goldCheck = Mathf.Clamp(Gold - Constants.COST[UnitType.REFINERY], 0, 1);
+
+            return refHeur * goldCheck;
+		}
+
+        private void BuildBase(string ovride = "")
+        {
+            
             //Calculate closest mine
+            switch(ovride)
+            {
+                case "BaseBuild":
+                    BuildBuilding(UnitType.BASE);
+                    break;
+                case "BarrackBuild":
+                    BuildBuilding(UnitType.BARRACKS);
+                    break;
+                case "GatherGold":
+					int closeMine1 = -1;
+					if (myWorkers.Count > 0)
+					{
+						closeMine1 = FindClosestUnit(myWorkers[0], mines);
+					}                    
+
+					Unit myMine1 = GameManager.Instance.GetUnit(closeMine1);
+					Unit myBase1 = GameManager.Instance.GetUnit(mainBaseNbr);
+					foreach (int workerNum in myWorkers)
+					{
+						Unit worker = GameManager.Instance.GetUnit(workerNum);
+						if (worker != null && worker.CurrentAction != UnitAction.IDLE)
+						{
+							continue;
+						}
+
+						Gather(worker, myMine1, myBase1);
+					}
+                    break;
+                case "Refine":
+					BuildBuilding(UnitType.REFINERY);
+                    break;
+
+				case "":
+                    Debug.LogWarning("No override given");
+                    break;
+			}
+            
 
             int closeMine = -1;
             if(myWorkers.Count > 0)
@@ -429,7 +573,6 @@ namespace GameManager
 				closeMine = FindClosestUnit(myWorkers[0], mines);
 			}
             
-            Debug.Log("Before 1st if");
             //If there's a valid closest mine 
             if(myBases.Count == 0)
             {
@@ -443,17 +586,14 @@ namespace GameManager
             {
                 mainBaseNbr = -1;
             }
-            Debug.Log("Before 2nd if");
             if (myBarracks.Count < 3 && myBases.Count > 0)
             {
                 BuildBuilding(UnitType.BARRACKS);
             }
-            Debug.Log("Before 3rd if");
             if (myRefineries.Count < 3 && myBases.Count > 0)
             {
                 BuildBuilding(UnitType.REFINERY);
             }
-            Debug.Log("Before 1st foreach");
             foreach (int baseNum in myBases)
             {
                 Unit unit = GameManager.Instance.GetUnit(baseNum);
