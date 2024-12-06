@@ -20,6 +20,13 @@ namespace GameManager
     public class PlanningAgent : Agent
     {
         private const int MAX_NBR_WORKERS = 20;
+        //For learning purposes
+        private int myTotalTrainedWorkers = 0;
+        private int myTotalTrainedSoldiers = 0;
+        private int myTotalTrainedArchers = 0;
+        private int enemyTotalTrainedWorkers = 0;
+        private int enemyTotalTrainedSoldiers = 0;
+        private int enemyTotalTrainedArchers = 0;
         enum AgentState {InitialBuild, ArmyBuilding, Attacking, GatherResources};
         private AgentState state = AgentState.InitialBuild;
 
