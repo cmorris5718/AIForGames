@@ -19,7 +19,12 @@ namespace GameManager
     ///</summary> 
     public class PlanningAgent : Agent
     {
-        private const int MAX_NBR_WORKERS = 20;
+        //Semi constants
+        private int maxWorkerCount = 20;
+        private int maxSoldierCount = 15;
+        private int maxBarracksCount = 5;
+        private int minBarracksForAttack = 1;
+        private int minRefineryForAttack = 1;
         //For learning purposes
         private int myTotalTrainedWorkers = 0;
         private int myTotalTrainedSoldiers = 0;
