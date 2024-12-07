@@ -30,6 +30,8 @@ namespace GameManager
         //For changing semi constants
 		int changeValue = 1;
 		int goldChangeValue = 50;
+        int roundNum = 0;
+        int wins = 0;
 
         //Which direction we're going 
         //For this value -1 means decreasing, 1 means increasing, 0 means it's unassigned aka first run 
@@ -228,7 +230,10 @@ namespace GameManager
             else
             {
                 //Get the initial worker
+                if(myWorkers.Count == 0)
+                    return;
                 Unit initilWorker = GameManager.Instance.GetUnit(myWorkers[0]);
+                
 
                 //Find the mine that's closest to this worker
                 int closeMine = -1;
@@ -341,10 +346,10 @@ namespace GameManager
         {
             Debug.Log("Nbr Wins: " + AgentNbrWins);
 
-            //There's definitely code somewhere that tells the winner but I'm not gonna find that shit
-            int wonGame = 0;
-            if (myBases.Count > enemyBases.Count)
+			int wonGame = 0;
+			if (AgentNbrWins > wins)
             {
+                wins++;
                 wonGame = 1;
             }
             else
@@ -366,6 +371,8 @@ namespace GameManager
             Log("Did we win: " + wonGame);
             Log("Time to end: " + GameManager.Instance.TotalGameTime);
             Log("Fitness: " + fitness);
+            Log("Value Changing: " + learnValue.ToString());
+            
 
             //Saving all the information in the dictionary
             Dictionary<string, float> values = new Dictionary<string, float>
@@ -416,7 +423,7 @@ namespace GameManager
             //Otherwise compare like normal
             else
             {
-				Dictionary<string, float> prevDict = QList[GameManager.Instance.TotalNbrOfRounds - 1];
+				Dictionary<string, float> prevDict = QList[roundNum - 1];
                 //If this fitness was better than the last games keep tweaking value in that direction
                 if (fitness > prevDict["Fitness"])
                 {
@@ -454,6 +461,7 @@ namespace GameManager
                     timesFlipped++;
                     if(timesFlipped == 2)
                     {
+                        timesFlipped = 0;
                         //When we've flipped 2 times we've check both directions and are at the max
                         //So we should change the metric we're working on
                         switch(learnValue)
@@ -477,9 +485,8 @@ namespace GameManager
                     }
                 }
 			}
-
 			//Saving the dictionary of values for later use
-			QList.Add(GameManager.Instance.TotalNbrOfRounds, values);
+			QList.Add(roundNum, values);
 		}
 
         /// <summary>
@@ -500,6 +507,8 @@ namespace GameManager
         {
 			//Debug.Log("PlanningAgent::InitializeRound");
 			buildPositions = new List<Vector3Int>();
+
+            roundNum++;
 
             FindProspectiveBuildPositions(UnitType.BASE);
 
