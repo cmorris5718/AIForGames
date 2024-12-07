@@ -22,9 +22,8 @@ namespace GameManager
         //Semi constants
         private int maxWorkerCount = 20;
         private int maxSoldierCount = 15;
-        private int maxBarracksCount = 5;
-        private int minBarracksForAttack = 1;
-        private int minRefineryForAttack = 1;
+        private int maxRefineries = 3;
+        private int maxBarracks = 4;
         //For learning purposes
         private int myTotalTrainedWorkers = 0;
         private int myTotalTrainedSoldiers = 0;
@@ -598,20 +597,29 @@ namespace GameManager
             {
                 mainBaseNbr = -1;
             }
-            if (myBarracks.Count < 3 && myBases.Count > 0)
+            if (myBarracks.Count < maxBarracks)
             {
-                BuildBuilding(UnitType.BARRACKS);
-            }
-            if (myRefineries.Count < 3 && myBases.Count > 0)
-            {
-                BuildBuilding(UnitType.REFINERY);
-            }
-            foreach (int baseNum in myBases)
-            {
-                Unit unit = GameManager.Instance.GetUnit(baseNum);
-                if(unit != null && unit.CurrentAction == UnitAction.IDLE && Gold >= Constants.COST[UnitType.WORKER] && myWorkers.Count < 20)
+                if (myBarracks.Count < 3 && myBases.Count > 0)
                 {
-                    Train(unit, UnitType.WORKER);
+                    BuildBuilding(UnitType.BARRACKS);
+                }
+            }
+            if (myRefineries.Count < maxRefineries)
+            {
+                if (myRefineries.Count < 3 && myBases.Count > 0)
+                {
+                    BuildBuilding(UnitType.REFINERY);
+                }
+            }
+            if (myWorkers.Count < maxWorkerCount)
+            {
+                foreach (int baseNum in myBases)
+                {
+                    Unit unit = GameManager.Instance.GetUnit(baseNum);
+                    if (unit != null && unit.CurrentAction == UnitAction.IDLE && Gold >= Constants.COST[UnitType.WORKER] && myWorkers.Count < 20)
+                    {
+                        Train(unit, UnitType.WORKER);
+                    }
                 }
             }
 			Unit myMine = GameManager.Instance.GetUnit(closeMine);
