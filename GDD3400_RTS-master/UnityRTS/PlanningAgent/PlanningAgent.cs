@@ -24,15 +24,39 @@ namespace GameManager
         private int maxSoldierCount = 15;
         private int maxRefineries = 3;
         private int maxBarracks = 4;
-        //For learning purposes
+        private float targetGold = 500;
+
+
+        //For changing semi constants
+		int changeValue = 1;
+		int goldChangeValue = 50;
+
+        //Which direction we're going 
+        //For this value -1 means decreasing, 1 means increasing, 0 means it's unassigned aka first run 
+        private int increasing = 0;
+
+        //For when we change directions on a given metric
+        private int timesFlipped = 0;
+
+        //For tracking our successes and failures
+        //Int key for first dictionary keeps track of iteration 
+        //Value for first dictionary contains another dictionary which will contain all metrics and value to attain those
+        Dictionary<int, Dictionary<string, float>> QList = new Dictionary<int, Dictionary<string, float>>();
+
+
+		enum LearnValue { Workers, Soldiers, Refineries, Barracks, TargetGold};
+		//For learning purposes
+		/*
         private int myTotalTrainedWorkers = 0;
         private int myTotalTrainedSoldiers = 0;
         private int myTotalTrainedArchers = 0;
         private int enemyTotalTrainedWorkers = 0;
         private int enemyTotalTrainedSoldiers = 0;
         private int enemyTotalTrainedArchers = 0;
-        enum AgentState {InitialBuild, ArmyBuilding, Attacking, GatherResources};
+        */
+		enum AgentState {InitialBuild, ArmyBuilding, Attacking, GatherResources};
         private AgentState state = AgentState.InitialBuild;
+        private LearnValue learnValue = LearnValue.Workers;
 
         #region Private Data
 
@@ -165,35 +189,69 @@ namespace GameManager
         /// Build a building
         /// </summary>
         /// <param name="unitType"></param>
-        public void BuildBuilding(UnitType unitType)
+        /// <param name="Base" ></param>
+        public void BuildBuilding(UnitType unitType, bool Base = false)
         {
-            // For each worker
-            foreach (int worker in myWorkers)
+            if (!Base)
             {
-                // Grab the unit we need for this function
-                Unit unit = GameManager.Instance.GetUnit(worker);
-
-                // Make sure this unit actually exists and we have enough gold
-                if (unit != null && Gold >= Constants.COST[unitType])
+                // For each worker
+                foreach (int worker in myWorkers)
                 {
-                    // Find the closest build position to this worker's position (DUMB) and 
+                    // Grab the unit we need for this function
+                    Unit unit = GameManager.Instance.GetUnit(worker);
+
+                    // Make sure this unit actually exists and we have enough gold
+                    if (unit != null && Gold >= Constants.COST[unitType])
+                    {
+                        // Find the closest build position to this worker's position (DUMB) and 
+                        float dist = float.MaxValue;
+                        Vector3Int pos = buildPositions[0];
+                        // build the base there
+                        foreach (Vector3Int toBuild in buildPositions)
+                        {
+                            if (GameManager.Instance.IsBoundedAreaBuildable(unitType, toBuild))
+                            {
+                                if ((new Vector3(toBuild.x, toBuild.y, toBuild.z) - unit.GridPosition).magnitude < dist)
+                                {
+                                    dist = (new Vector3(toBuild.x, toBuild.y, toBuild.z) - unit.GridPosition).magnitude;
+                                    pos = toBuild;
+                                }
+                            }
+                        }
+                        if (pos != null)
+                        {
+                            Build(unit, pos, unitType);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                //Get the initial worker
+                Unit initilWorker = GameManager.Instance.GetUnit(myWorkers[0]);
+
+                //Find the mine that's closest to this worker
+                int closeMine = -1;
+                closeMine = FindClosestUnit(myWorkers[0], mines);
+                if(closeMine != -1)
+                {
+                    Unit CloseMineUnit = GameManager.Instance.GetUnit(closeMine);
                     float dist = float.MaxValue;
                     Vector3Int pos = buildPositions[0];
-                    // build the base there
-                    foreach (Vector3Int toBuild in buildPositions)
+                    foreach(Vector3Int toBuild in buildPositions)
                     {
-                        if (GameManager.Instance.IsBoundedAreaBuildable(unitType, toBuild))
+                        if(GameManager.Instance.IsBoundedAreaBuildable(unitType, toBuild))
                         {
-                            if ((new Vector3(toBuild.x, toBuild.y, toBuild.z) - unit.GridPosition).magnitude < dist)
+                            if((new Vector3(toBuild.x,toBuild.y, toBuild.z) - CloseMineUnit.GridPosition).magnitude < dist)
                             {
-                                dist = (new Vector3(toBuild.x, toBuild.y, toBuild.z) - unit.GridPosition).magnitude;
-                                pos = toBuild;
-                            }
+								dist = (new Vector3(toBuild.x, toBuild.y, toBuild.z) - CloseMineUnit.GridPosition).magnitude;
+								pos = toBuild;
+							}
                         }
                     }
                     if (pos != null)
                     {
-                        Build(unit, pos, unitType);
+                        Build(initilWorker, pos, unitType);
                     }
                 }
             }
@@ -283,12 +341,146 @@ namespace GameManager
         {
             Debug.Log("Nbr Wins: " + AgentNbrWins);
 
+            //There's definitely code somewhere that tells the winner but I'm not gonna find that shit
+            int wonGame = 0;
+            if (myBases.Count > enemyBases.Count)
+            {
+                wonGame = 1;
+            }
+            else
+            {
+                wonGame = -1;
+            }
+
+            //Calculate fitness
+            //Less time to finish game gets more points
+            //Winning gives a lot of points losing takes away a lot of points
+            float fitness = (GameManager.Instance.MaxNbrOfSeconds - GameManager.Instance.TotalGameTime) + (wonGame * 1000f);
+            
             //Debug.Log("PlanningAgent::Learn");
-            Log("value 1");
-            Log("value 2");
-            Log("value 3a, 3b");
-            Log("value 4");
-        }
+            Log("Max Workers Value: " + maxWorkerCount);
+            Log("Max Soldier Value: " + maxSoldierCount);
+            Log("Max Refineries Value: " + maxRefineries);
+            Log("Max Barracks Valeu: " + maxBarracks);
+            Log("Target Gold Value: " + targetGold);
+            Log("Did we win: " + wonGame);
+            Log("Time to end: " + GameManager.Instance.TotalGameTime);
+            Log("Fitness: " + fitness);
+
+            //Saving all the information in the dictionary
+            Dictionary<string, float> values = new Dictionary<string, float>
+            {
+                { "MaxWorkersValue", maxWorkerCount},
+                { "MaxSoldierValue", maxSoldierCount},
+                { "MaxRefineriesValue", maxRefineries},
+                { "MaxBarracksValue", maxBarracks},
+                { "TargetGoldValue" , targetGold },
+                { "GameTime", GameManager.Instance.TotalGameTime },
+                { "Win" , wonGame },
+                { "Fitness" , fitness }
+            };
+
+            //If on first iteration we need special handling to avoid index out of bounds
+            if(increasing == 0)
+            {
+                //Increase or decrease randomly
+                if(UnityEngine.Random.Range(0,1) >= 0.5)
+                {
+                    increasing = 1;
+                }
+                else
+                {
+                    increasing = -1;
+                }
+
+				//Adjust the target values
+				switch (learnValue)
+				{
+					case LearnValue.Workers:
+						maxWorkerCount = maxWorkerCount + (increasing * changeValue);
+						break;
+					case LearnValue.Soldiers:
+						maxSoldierCount = maxSoldierCount + (increasing * changeValue);
+						break;
+					case LearnValue.Refineries:
+						maxRefineries = maxRefineries + (increasing * changeValue);
+						break;
+					case LearnValue.Barracks:
+						maxBarracks = maxBarracks + (increasing * changeValue);
+						break;
+					case LearnValue.TargetGold:
+						targetGold = targetGold + (increasing * goldChangeValue);
+						break;
+				}
+			}
+            //Otherwise compare like normal
+            else
+            {
+				Dictionary<string, float> prevDict = QList[GameManager.Instance.TotalNbrOfRounds - 1];
+                //If this fitness was better than the last games keep tweaking value in that direction
+                if (fitness > prevDict["Fitness"])
+                {
+                    switch (learnValue)
+                    {
+                        case LearnValue.Workers:
+                            maxWorkerCount = maxWorkerCount + (increasing * changeValue);
+                            break;
+                        case LearnValue.Soldiers:
+                            maxSoldierCount = maxSoldierCount + (increasing * changeValue);
+                            break;
+                        case LearnValue.Refineries:
+                            maxRefineries = maxRefineries + (increasing * changeValue);
+                            break;
+                        case LearnValue.Barracks:
+                            maxBarracks = maxBarracks + (increasing * changeValue);
+                            break;
+                        case LearnValue.TargetGold:
+                            targetGold = targetGold + (increasing * goldChangeValue);
+                            break;
+                    }
+                }
+                //If we did worse switch the direction of increasing and revert values
+                else
+                {
+                    increasing = -1;
+                    //Resetting the values 
+                    maxWorkerCount = (int)prevDict["MaxWorkersValue"];
+                    maxSoldierCount = (int)prevDict["MaxSoldierValue"];
+                    maxRefineries = (int)prevDict["MaxRefineriesValue"];
+                    maxBarracks = (int)prevDict["MaxBarracksValue"];
+                    targetGold = (int)prevDict["TargetGoldValue"];
+
+                    //Incrementing times we've changed directions
+                    timesFlipped++;
+                    if(timesFlipped == 2)
+                    {
+                        //When we've flipped 2 times we've check both directions and are at the max
+                        //So we should change the metric we're working on
+                        switch(learnValue)
+                        {
+							case LearnValue.Workers:
+                                learnValue = LearnValue.Soldiers;
+								break;
+							case LearnValue.Soldiers:
+                                learnValue = LearnValue.Refineries;
+								break;
+							case LearnValue.Refineries:
+                                learnValue = LearnValue.Barracks;
+								break;
+							case LearnValue.Barracks:
+                                learnValue = LearnValue.TargetGold;
+								break;
+							case LearnValue.TargetGold:
+                                learnValue = LearnValue.Workers;
+								break;
+						}
+                    }
+                }
+			}
+
+			//Saving the dictionary of values for later use
+			QList.Add(GameManager.Instance.TotalNbrOfRounds, values);
+		}
 
         /// <summary>
         /// Called before each match between two agents.  Matches have
@@ -417,6 +609,10 @@ namespace GameManager
                     state = AgentState.InitialBuild;
                     ovride = bestAction;
                     break;
+                case "Worker":
+                    state = AgentState.InitialBuild;
+                    ovride = bestAction;
+                    break;
                 case "BarrackBuild":
                     state = AgentState.InitialBuild;
 					ovride = bestAction;
@@ -451,7 +647,7 @@ namespace GameManager
                 break;
                 case AgentState.ArmyBuilding:
                     BuildArmy();
-                    
+                    GatherGold();
                     if (myBases.Count == 0 || myBarracks.Count == 0 || myRefineries.Count == 0)
                     {
                         state = AgentState.InitialBuild;
@@ -459,6 +655,7 @@ namespace GameManager
                     
                 break;
                 case AgentState.Attacking:
+                    GatherGold();
                     Attack();                    
                     if (myArchers.Count + mySoldiers.Count < enemyArchers.Count + enemySoldiers.Count)
                     {
@@ -473,6 +670,7 @@ namespace GameManager
             Dictionary<string, float> heuristicsDict = new Dictionary<string, float>
             {
                 { "BaseBuild", CalcBaseHeur() },
+                { "Worker", CalcWorkerHeur() },
                 { "BarrackBuild", CalcBarrackHeur() },
 				{ "Refine" , CalcRefHeur() },
 				{ "ArmyBuild", CalcArmyHeur()},
@@ -489,6 +687,14 @@ namespace GameManager
 			return heuristicsDict;
         }
 
+        private float CalcWorkerHeur()
+        {
+            float workerHeur = Mathf.Clamp(maxWorkerCount - myWorkers.Count, 0, 1);
+            float goldCheck = Mathf.Clamp(Gold - Constants.COST[UnitType.WORKER], 0, 1);
+
+            return workerHeur * goldCheck;
+        }
+
         private float CalcBaseHeur()
         {
 			float baseHeur = Mathf.Clamp(1 - myBases.Count, 0, 1);
@@ -502,9 +708,8 @@ namespace GameManager
             float barrHeur = Mathf.Clamp(1 - myBarracks.Count, 0, 1);
             float goldCheck = Mathf.Clamp(Gold - Constants.COST[UnitType.BARRACKS], 0, 1);
             float barrVsOpp = Mathf.Clamp(enemyBarracks.Count - myBarracks.Count, 0, 1);
-            float maxGold = Mathf.Clamp(1000f - Gold, 0, 1);
 
-            return Mathf.Clamp((barrHeur + barrVsOpp + maxGold) * goldCheck, 0, 1);
+            return Mathf.Clamp((barrHeur + barrVsOpp) * goldCheck, 0, 1);
         }
 
         private float CalcArmyHeur()
@@ -524,7 +729,6 @@ namespace GameManager
 
         private float GatherGoldHeur()
         {
-            float targetGold = 500;
             return Mathf.Clamp(targetGold - Gold, 0, 1);
         }
 
@@ -543,10 +747,12 @@ namespace GameManager
             switch(ovride)
             {
                 case "BaseBuild":
-                    BuildBuilding(UnitType.BASE);
+                    
+                    BuildBuilding(UnitType.BASE, true);
                     break;
                 case "BarrackBuild":
-                    BuildBuilding(UnitType.BARRACKS);
+					if (myBarracks.Count < maxBarracks)
+						BuildBuilding(UnitType.BARRACKS);
                     break;
                 case "GatherGold":
 					int closeMine1 = -1;
@@ -571,7 +777,13 @@ namespace GameManager
                 case "Refine":
 					BuildBuilding(UnitType.REFINERY);
                     break;
-
+                case "Worker":
+                    Unit myBase2 = GameManager.Instance.GetUnit(mainBaseNbr);
+                    if (myBase2 != null && myBase2.IsBuilt && myBase2.CurrentAction == UnitAction.IDLE)
+                    {
+                        Train(myBase2, UnitType.WORKER);
+                    }
+                    break;
 				case "":
                     Debug.LogWarning("No override given");
                     break;
@@ -587,8 +799,8 @@ namespace GameManager
             //If there's a valid closest mine 
             if(myBases.Count == 0)
             {
-                BuildBuilding(UnitType.BASE);
-            }
+				BuildBuilding(UnitType.BASE, true);
+			}
             if( myBases.Count > 0)
             {
                 mainBaseNbr = myBases[0];
@@ -599,17 +811,11 @@ namespace GameManager
             }
             if (myBarracks.Count < maxBarracks)
             {
-                if (myBarracks.Count < 3 && myBases.Count > 0)
-                {
-                    BuildBuilding(UnitType.BARRACKS);
-                }
+                BuildBuilding(UnitType.BARRACKS);
             }
             if (myRefineries.Count < maxRefineries)
             {
-                if (myRefineries.Count < 3 && myBases.Count > 0)
-                {
-                    BuildBuilding(UnitType.REFINERY);
-                }
+                BuildBuilding(UnitType.REFINERY);
             }
             if (myWorkers.Count < maxWorkerCount)
             {
@@ -636,26 +842,50 @@ namespace GameManager
             }
         }
 
+        private void GatherGold()
+        {
+			int closeMine = -1;
+			if (myWorkers.Count > 0)
+			{
+				closeMine = FindClosestUnit(myWorkers[0], mines);
+			}
+
+			Unit myMine = GameManager.Instance.GetUnit(closeMine);
+			Unit myBase = GameManager.Instance.GetUnit(mainBaseNbr);
+			foreach (int workerNum in myWorkers)
+			{
+				Unit worker = GameManager.Instance.GetUnit(workerNum);
+				if (worker != null && worker.CurrentAction != UnitAction.IDLE)
+				{
+					continue;
+				}
+
+				Gather(worker, myMine, myBase);
+			}
+		}
+
         private void BuildArmy()
         {
-            foreach (int barracks in myBarracks)
+            if (mySoldiers.Count < maxSoldierCount)
             {
-                Unit barrack = GameManager.Instance.GetUnit(barracks);
-                if (barrack != null && barrack.IsBuilt && barrack.CurrentAction == UnitAction.IDLE)
+                foreach (int barracks in myBarracks)
                 {
-                    float val = (float)mySoldiers.Count / (float)myArchers.Count;
-                    //ensure we have 2x archers to soldiers
-                    if (val <  2)
+                    Unit barrack = GameManager.Instance.GetUnit(barracks);
+                    if (barrack != null && barrack.IsBuilt && barrack.CurrentAction == UnitAction.IDLE)
                     {
-                        Train(barrack, UnitType.ARCHER);
-                    }
-                    else
-                    {
-                        Train(barrack, UnitType.SOLDIER);
+                        float val = (float)mySoldiers.Count / (float)myArchers.Count;
+                        //ensure we have 2x archers to soldiers
+                        if (val < 2)
+                        {
+                            Train(barrack, UnitType.ARCHER);
+                        }
+                        else
+                        {
+                            Train(barrack, UnitType.SOLDIER);
+                        }
                     }
                 }
             }
-            Attack();
         }
 
         private void Attack()
