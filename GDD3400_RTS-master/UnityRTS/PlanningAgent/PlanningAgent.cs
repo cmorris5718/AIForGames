@@ -3,9 +3,6 @@ using System.Linq;
 using GameManager.EnumTypes;
 using GameManager.GameElements;
 using UnityEngine;
-using System;
-using System.Net;
-using System.Runtime.InteropServices;
 
 /////////////////////////////////////////////////////////////////////////////
 // This is the Moron Agent
@@ -32,6 +29,16 @@ namespace GameManager
 		int goldChangeValue = 50;
         int roundNum = 0;
         int wins = 0;
+        int lastLoopRandom = 0;
+        int totalLoops = 0;
+        int totalRandomCount = 0;
+        int currentValueIteration = 0;
+
+        //For storing first maximum
+        Dictionary<string, float> FirstMaximum;
+        Dictionary<string, float> StartVals;
+
+		bool compareToResetDict = false;
 
         //Which direction we're going 
         //For this value -1 means decreasing, 1 means increasing, 0 means it's unassigned aka first run 
@@ -338,6 +345,113 @@ namespace GameManager
 
         #region Public Methods
 
+        private void ChangeValueRandom(LearnValue changeValue)
+        {
+			switch (changeValue)
+			{
+				case LearnValue.Workers:
+					maxWorkerCount = Random.Range(0, 40);
+					break;
+				case LearnValue.Soldiers:
+					maxSoldierCount = Random.Range(0, 40);
+					break;
+				case LearnValue.Refineries:
+					maxRefineries = Random.Range(0, 40);
+					break;
+				case LearnValue.Barracks:
+					maxBarracks = Random.Range(0, 40);
+					break;
+				case LearnValue.TargetGold:
+					targetGold = Random.Range(100, 2000);
+					break;
+			}
+		}
+
+        private int CalculateWin()
+        {
+			if (AgentNbrWins > wins)
+			{
+				wins++;
+                return 1;
+			}
+			else
+			{
+                return -1;
+			}
+		}
+
+        private void SwitchLearnValue()
+        {
+			//Switch which value is being learned
+			switch (learnValue)
+			{
+				case LearnValue.Workers:
+					learnValue = LearnValue.Soldiers;
+					break;
+				case LearnValue.Soldiers:
+					learnValue = LearnValue.Refineries;
+					break;
+				case LearnValue.Refineries:
+					learnValue = LearnValue.Barracks;
+					break;
+				case LearnValue.Barracks:
+					learnValue = LearnValue.TargetGold;
+					break;
+				case LearnValue.TargetGold:
+					learnValue = LearnValue.Workers;
+					break;
+			}
+		}
+
+        private void SetValuesToDictValues(Dictionary<string, float> values)
+        {
+            //Setting the values to input dictionary values
+			maxWorkerCount = (int)values["MaxWorkersValue"];
+			maxSoldierCount = (int)values["MaxSoldierValue"];
+			maxRefineries = (int)values["MaxRefineriesValue"];
+			maxBarracks = (int)values["MaxBarracksValue"];
+			targetGold = (int)values["TargetGoldValue"];
+		}
+
+        private void IncrementValues(int increasing)
+        {
+			switch (learnValue)
+			{
+
+				case LearnValue.Workers:
+					maxWorkerCount = maxWorkerCount + (increasing * changeValue);
+					break;
+				case LearnValue.Soldiers:
+					maxSoldierCount = maxSoldierCount + (increasing * changeValue);
+					break;
+				case LearnValue.Refineries:
+					maxRefineries = maxRefineries + (increasing * changeValue);
+					break;
+				case LearnValue.Barracks:
+					maxBarracks = maxBarracks + (increasing * changeValue);
+					break;
+				case LearnValue.TargetGold:
+					targetGold = targetGold + (increasing * goldChangeValue);
+					break;
+			}
+		}
+
+        private void WriteToDebugFile(int wonGame, float fitness, float increaseByRandom)
+        {
+			Log("Max Workers Value: " + maxWorkerCount);
+			Log("Max Soldier Value: " + maxSoldierCount);
+			Log("Max Refineries Value: " + maxRefineries);
+			Log("Max Barracks Valeu: " + maxBarracks);
+			Log("Target Gold Value: " + targetGold);
+			Log("Did we win: " + wonGame);
+			Log("Time to end: " + GameManager.Instance.TotalGameTime);
+			Log("Fitness: " + fitness);
+			Log("Value Changing: " + learnValue.ToString());
+			Log("Increasing By Random: " + increaseByRandom);
+		}
+
+
+
         /// <summary>
         /// Called at the end of each round before remaining units are
         /// destroyed to allow the agent to observe the "win/loss" state
@@ -346,52 +460,67 @@ namespace GameManager
         {
             Debug.Log("Nbr Wins: " + AgentNbrWins);
 
-			int wonGame = 0;
-			if (AgentNbrWins > wins)
-            {
-                wins++;
-                wonGame = 1;
-            }
-            else
-            {
-                wonGame = -1;
-            }
+            //Calculate if won the game
+			int wonGame =  CalculateWin();			
 
-            //Calculate fitness
-            //Less time to finish game gets more points
-            //Winning gives a lot of points losing takes away a lot of points
-            float fitness = (GameManager.Instance.MaxNbrOfSeconds - GameManager.Instance.TotalGameTime) + (wonGame * 1000f);
-            
+			//Calculate fitness
+			//Less time to finish game gets more points
+			//Winning gives a lot of points losing takes away a lot of points
+			float fitness = (GameManager.Instance.MaxNbrOfSeconds - GameManager.Instance.TotalGameTime) + (wonGame * 1000f);
+
+			//Saving all the information in the dictionary
+			Dictionary<string, float> values = new Dictionary<string, float>
+			{
+				{ "MaxWorkersValue", maxWorkerCount},
+				{ "MaxSoldierValue", maxSoldierCount},
+				{ "MaxRefineriesValue", maxRefineries},
+				{ "MaxBarracksValue", maxBarracks},
+				{ "TargetGoldValue" , targetGold },
+				{ "GameTime", GameManager.Instance.TotalGameTime },
+				{ "Win" , wonGame },
+				{ "Fitness" , fitness },
+				{ "IncreaseByRandom:" , 0 }
+			};
+
+			//Every 5 loops random a value
+			if (totalLoops - lastLoopRandom >= 5)
+			{
+                //Sets the last loop random to this loop iteration
+                lastLoopRandom = totalLoops;
+                //Sets the value for proper output 
+				values["IncreaseByRandom:"] = 1;
+                //Randoms a value
+                ChangeValueRandom((LearnValue)(totalRandomCount % 5));
+			}
+
             //Debug.Log("PlanningAgent::Learn");
-            Log("Max Workers Value: " + maxWorkerCount);
-            Log("Max Soldier Value: " + maxSoldierCount);
-            Log("Max Refineries Value: " + maxRefineries);
-            Log("Max Barracks Valeu: " + maxBarracks);
-            Log("Target Gold Value: " + targetGold);
-            Log("Did we win: " + wonGame);
-            Log("Time to end: " + GameManager.Instance.TotalGameTime);
-            Log("Fitness: " + fitness);
-            Log("Value Changing: " + learnValue.ToString());
-            
+            WriteToDebugFile(wonGame, fitness, values["IncreaseByRandom:"]);
 
-            //Saving all the information in the dictionary
-            Dictionary<string, float> values = new Dictionary<string, float>
+            //Since we haven't added our new results to this dictionary if it's the first 
+            //test of a given learnValue we need to save a reference to where it will be added
+            //At the end of this method
+            if (currentValueIteration == 0)
             {
-                { "MaxWorkersValue", maxWorkerCount},
-                { "MaxSoldierValue", maxSoldierCount},
-                { "MaxRefineriesValue", maxRefineries},
-                { "MaxBarracksValue", maxBarracks},
-                { "TargetGoldValue" , targetGold },
-                { "GameTime", GameManager.Instance.TotalGameTime },
-                { "Win" , wonGame },
-                { "Fitness" , fitness }
-            };
+                //Do special shit for round 1 
+                if (roundNum == 1)
+                {
+                    StartVals = values;
+                    increasing = 0;
+                }
+                else
+                {
+                    StartVals = QList[QList.Count - 1];
+                    increasing = 0;
+                }
+            }
+            currentValueIteration++;
+         
 
             //If on first iteration we need special handling to avoid index out of bounds
             if(increasing == 0)
             {
                 //Increase or decrease randomly
-                if(UnityEngine.Random.Range(0,1) >= 0.5)
+                if(Random.Range(0,1) >= 0.5)
                 {
                     increasing = 1;
                 }
@@ -399,91 +528,61 @@ namespace GameManager
                 {
                     increasing = -1;
                 }
-
-				//Adjust the target values
-				switch (learnValue)
-				{
-					case LearnValue.Workers:
-						maxWorkerCount = maxWorkerCount + (increasing * changeValue);
-						break;
-					case LearnValue.Soldiers:
-						maxSoldierCount = maxSoldierCount + (increasing * changeValue);
-						break;
-					case LearnValue.Refineries:
-						maxRefineries = maxRefineries + (increasing * changeValue);
-						break;
-					case LearnValue.Barracks:
-						maxBarracks = maxBarracks + (increasing * changeValue);
-						break;
-					case LearnValue.TargetGold:
-						targetGold = targetGold + (increasing * goldChangeValue);
-						break;
-				}
+                //Increment the values
+				IncrementValues(increasing);
 			}
             //Otherwise compare like normal
             else
             {
-				Dictionary<string, float> prevDict = QList[roundNum - 1];
-                //If this fitness was better than the last games keep tweaking value in that direction
-                if (fitness > prevDict["Fitness"])
+                //Getting the correct dictionary to compare to
+                Dictionary<string, float> compareDict = new Dictionary<string, float>();
+                if(!compareToResetDict)
                 {
-                    switch (learnValue)
-                    {
-                        case LearnValue.Workers:
-                            maxWorkerCount = maxWorkerCount + (increasing * changeValue);
-                            break;
-                        case LearnValue.Soldiers:
-                            maxSoldierCount = maxSoldierCount + (increasing * changeValue);
-                            break;
-                        case LearnValue.Refineries:
-                            maxRefineries = maxRefineries + (increasing * changeValue);
-                            break;
-                        case LearnValue.Barracks:
-                            maxBarracks = maxBarracks + (increasing * changeValue);
-                            break;
-                        case LearnValue.TargetGold:
-                            targetGold = targetGold + (increasing * goldChangeValue);
-                            break;
-                    }
+                    compareDict = QList[roundNum - 1];
                 }
-                //If we did worse switch the direction of increasing and revert values
                 else
                 {
-                    increasing = -1;
-                    //Resetting the values 
-                    maxWorkerCount = (int)prevDict["MaxWorkersValue"];
-                    maxSoldierCount = (int)prevDict["MaxSoldierValue"];
-                    maxRefineries = (int)prevDict["MaxRefineriesValue"];
-                    maxBarracks = (int)prevDict["MaxBarracksValue"];
-                    targetGold = (int)prevDict["TargetGoldValue"];
+                    compareDict = StartVals;
+				}
 
-                    //Incrementing times we've changed directions
-                    timesFlipped++;
-                    if(timesFlipped == 2)
-                    {
-                        timesFlipped = 0;
-                        //When we've flipped 2 times we've check both directions and are at the max
-                        //So we should change the metric we're working on
-                        switch(learnValue)
-                        {
-							case LearnValue.Workers:
-                                learnValue = LearnValue.Soldiers;
-								break;
-							case LearnValue.Soldiers:
-                                learnValue = LearnValue.Refineries;
-								break;
-							case LearnValue.Refineries:
-                                learnValue = LearnValue.Barracks;
-								break;
-							case LearnValue.Barracks:
-                                learnValue = LearnValue.TargetGold;
-								break;
-							case LearnValue.TargetGold:
-                                learnValue = LearnValue.Workers;
-								break;
+                //If fitness is worse than the compared dictionary take the appropriate action
+                if(fitness < compareDict["Fitness"])
+                {
+					//Incrementing times we've flipped and setting increasing to opposite
+					timesFlipped++;
+					increasing *= -1;
+					//On First flip save reference to local maximum to check against other side results
+					if (timesFlipped == 1)
+					{
+						//Saving a reference to this maximum
+						FirstMaximum = QList[roundNum - 1];
+						//Set compare to reset dict to compare to correct dictionary
+						compareToResetDict = true;
+                        //Resetting the values 
+                        SetValuesToDictValues(StartVals);
+					}
+					else
+					{
+						//Compare results from first max to this new found max
+						if (values["Fitness"] > FirstMaximum["Fitness"])
+						{
+                            //When new max is greater set that to be new values
+                            SetValuesToDictValues(QList[roundNum-1]);
 						}
-                    }
-                }
+						else
+						{
+                            //When first max is greater set that to be new values
+                            SetValuesToDictValues(FirstMaximum);
+						}
+
+						//Resetting currentValue Iteration 
+						currentValueIteration = 0;
+
+                        //Switching learn value
+                        SwitchLearnValue();
+					}
+				}
+				IncrementValues(increasing);
 			}
 			//Saving the dictionary of values for later use
 			QList.Add(roundNum, values);
